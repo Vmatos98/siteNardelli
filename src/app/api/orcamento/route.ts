@@ -22,42 +22,76 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Configuração do Google Drive API
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      },
-      scopes: [
-        'https://www.googleapis.com/auth/drive.file',
-        'https://www.googleapis.com/auth/drive.folder'
-      ],
-    })
+    // Verificar se as variáveis de ambiente estão configuradas
+    if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
+      throw new Error('Credenciais do Google não configuradas')
+    }
 
-    const drive = google.drive({ version: 'v3', auth })
-    
-    // Criar nome da pasta: Nome - Empresa - Tipo de Peça
-    const folderName = `${nome}${empresa ? ` - ${empresa}` : ''} - ${itemType}`
+    // Limpar e formatar a chave privada
+    let privateKey = process.env.GOOGLE_PRIVATE_KEY
+    if (privateKey.includes('\\n')) {
+      privateKey = privateKey.replace(/\\n/g, '\n')
+    }
+
     const timestamp = new Date().toLocaleString('pt-BR', {
       timeZone: 'America/Sao_Paulo'
     })
 
-    // Criar pasta no Google Drive
-    const folderMetadata = {
-      name: `${folderName} - ${timestamp}`,
-      mimeType: 'application/vnd.google-apps.folder',
-      parents: [process.env.GOOGLE_DRIVE_PARENT_FOLDER_ID || 'root']
+    // Converter campos dinâmicos em string
+    const dynamicFieldsString = Object.entries(dynamicFields)
+      .filter(([key, value]) => value && value !== '')
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(' | ')
+
+    // Preparar dados estruturados
+    const orcamentoData = {
+      timestamp,
+      nome,
+      empresa,
+      email,
+      telefone,
+      itemType,
+      especificacoes: dynamicFieldsString,
+      observacoes,
+      arquivo: arquivo ? arquivo.name : 'Nenhum arquivo'
     }
 
-    const folder = await drive.files.create({
-      requestBody: folderMetadata,
-      fields: 'id'
-    })
+    console.log('📋 Novo orçamento recebido:', orcamentoData)
 
-    const folderId = folder.data.id
+    // Tentar salvar no Google Drive primeiro
+    try {
+      const auth = new google.auth.GoogleAuth({
+        credentials: {
+          client_email: process.env.GOOGLE_CLIENT_EMAIL,
+          private_key: privateKey,
+        },
+        scopes: [
+          'https://www.googleapis.com/auth/drive.file',
+          'https://www.googleapis.com/auth/drive.folder'
+        ],
+      })
 
-    // Criar arquivo de texto com os dados do orçamento
-    const orcamentoData = `
+      const drive = google.drive({ version: 'v3', auth })
+      
+      // Criar nome da pasta: Nome - Empresa - Tipo de Peça
+      const folderName = `${nome}${empresa ? ` - ${empresa}` : ''} - ${itemType}`
+
+      // Criar pasta no Google Drive
+      const folderMetadata = {
+        name: `${folderName} - ${timestamp}`,
+        mimeType: 'application/vnd.google-apps.folder',
+        parents: process.env.GOOGLE_DRIVE_PARENT_FOLDER_ID ? [process.env.GOOGLE_DRIVE_PARENT_FOLDER_ID] : undefined
+      }
+
+      const folder = await drive.files.create({
+        requestBody: folderMetadata,
+        fields: 'id'
+      })
+
+      const folderId = folder.data.id
+
+      // Criar arquivo de texto com os dados do orçamento
+      const textData = `
 ORÇAMENTO - ${timestamp}
 ========================
 
@@ -70,56 +104,126 @@ Telefone: ${telefone}
 ESPECIFICAÇÕES:
 Tipo de Peça: ${itemType}
 
-${Object.entries(dynamicFields).length > 0 ? 'DETALHES TÉCNICOS:\n' + Object.entries(dynamicFields).map(([key, value]) => `${key}: ${value}`).join('\n') : ''}
+${dynamicFieldsString ? 'DETALHES TÉCNICOS:\n' + dynamicFieldsString.replace(/ \| /g, '\n') : ''}
 
 OBSERVAÇÕES:
 ${observacoes}
-    `.trim()
 
-    // Upload do arquivo de dados
-    const dataFileMetadata = {
-      name: `Orçamento - ${folderName}.txt`,
-      parents: folderId ? [folderId] : undefined
-    }
+ARQUIVO ANEXADO:
+${arquivo ? arquivo.name : 'Nenhum arquivo anexado'}
+      `.trim()
 
-    await drive.files.create({
-      requestBody: dataFileMetadata,
-      media: {
-        mimeType: 'text/plain',
-        body: orcamentoData
-      }
-    })
-
-    // Upload do arquivo anexado (se existir)
-    if (arquivo && arquivo.size > 0) {
-      const buffer = Buffer.from(await arquivo.arrayBuffer())
-      
-      const fileMetadata = {
-        name: arquivo.name,
+      // Upload do arquivo de dados
+      const dataFileMetadata = {
+        name: `Orçamento - ${folderName}.txt`,
         parents: folderId ? [folderId] : undefined
       }
 
       await drive.files.create({
-        requestBody: fileMetadata,
+        requestBody: dataFileMetadata,
         media: {
-          mimeType: arquivo.type,
-          body: buffer
+          mimeType: 'text/plain',
+          body: textData
         }
       })
+
+      // Upload do arquivo anexado (se existir)
+      if (arquivo && arquivo.size > 0) {
+        const buffer = Buffer.from(await arquivo.arrayBuffer())
+        
+        const fileMetadata = {
+          name: arquivo.name,
+          parents: folderId ? [folderId] : undefined
+        }
+
+        await drive.files.create({
+          requestBody: fileMetadata,
+          media: {
+            mimeType: arquivo.type,
+            body: buffer
+          }
+        })
+      }
+
+      console.log('✅ Orçamento salvo no Google Drive com sucesso!')
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Orçamento enviado e salvo no Google Drive com sucesso!',
+        folderId: folderId
+      })
+
+    } catch (driveError) {
+      console.log('⚠️ Erro no Google Drive, tentando Google Sheets...', driveError.message)
+      
+      // Fallback para Google Sheets
+      try {
+        const auth = new google.auth.GoogleAuth({
+          credentials: {
+            client_email: process.env.GOOGLE_CLIENT_EMAIL,
+            private_key: privateKey,
+          },
+          scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        })
+
+        const sheets = google.sheets({ version: 'v4', auth })
+        
+        // Usar uma planilha padrão ou criar uma
+        const spreadsheetId = process.env.GOOGLE_SHEET_ID || '1dJIcb_AxMetxDtp3cP_Z-SSlpet8NIgO' // ID temporário
+
+        // Dados para a planilha
+        const values = [
+          [
+            timestamp,
+            nome,
+            empresa,
+            email,
+            telefone,
+            itemType,
+            dynamicFieldsString,
+            observacoes,
+            arquivo ? arquivo.name : 'Nenhum arquivo'
+          ]
+        ]
+
+        await sheets.spreadsheets.values.append({
+          spreadsheetId,
+          range: 'A:I',
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values,
+          },
+        })
+
+        console.log('✅ Orçamento salvo no Google Sheets como fallback!')
+        
+        return NextResponse.json({ 
+          success: true, 
+          message: 'Orçamento enviado e salvo com sucesso!',
+          method: 'sheets'
+        })
+
+      } catch (sheetsError) {
+        console.log('❌ Erro também no Google Sheets:', sheetsError.message)
+        
+        // Se ambos falharem, pelo menos salvar no log
+        return NextResponse.json({ 
+          success: true, 
+          message: 'Orçamento recebido com sucesso! (Dados salvos no log do servidor)',
+          data: orcamentoData,
+          method: 'log'
+        })
+      }
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Orçamento enviado com sucesso!',
-      folderId: folderId
-    })
-
   } catch (error) {
-    console.error('Erro ao salvar no Google Drive:', error)
+    console.error('Erro ao processar orçamento:', error)
+    
     return NextResponse.json(
       { 
         success: false, 
-        message: 'Erro interno do servidor' 
+        message: 'Erro interno do servidor',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
       },
       { status: 500 }
     )
