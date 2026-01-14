@@ -143,6 +143,35 @@ export default function Orcamento() {
     }))
   }
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '') // Remove tudo que não é dígito
+    
+    // Limita a 11 dígitos (celular) ou 10 dígitos (fixo)
+    if (value.length > 11) {
+      value = value.slice(0, 11)
+    }
+    
+    // Aplica a máscara
+    if (value.length >= 11) {
+      // Celular: (11) 99999-9999
+      value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+    } else if (value.length >= 10) {
+      // Fixo: (11) 9999-9999
+      value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
+    } else if (value.length >= 6) {
+      // Parcial: (11) 9999-
+      value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3')
+    } else if (value.length >= 2) {
+      // Parcial: (11) 
+      value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2')
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      telefone: value
+    }))
+  }
+
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const categoryId = e.target.value
     setFormData(prev => ({
@@ -163,6 +192,14 @@ export default function Orcamento() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validar telefone
+    const phoneDigits = formData.telefone.replace(/\D/g, '')
+    if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+      alert('Por favor, digite um telefone válido com DDD (10 ou 11 dígitos)')
+      return
+    }
+    
     setIsSubmitting(true)
 
     try {
@@ -208,7 +245,7 @@ export default function Orcamento() {
   const renderDynamicFields = () => {
     if (!selectedCategory) return null
 
-    return selectedCategory.campos.map((campo: any) => {
+    return selectedCategory.campos.map((campo: unknown) => {
       let labelText = campo.label
       if (campo.unit) labelText += ` (${campo.unit})`
       if (campo.required) labelText += ' *'
@@ -379,10 +416,14 @@ export default function Orcamento() {
                       name="telefone"
                       required 
                       value={formData.telefone}
-                      onChange={handleInputChange}
+                      onChange={handlePhoneChange}
                       placeholder="(00) 00000-0000"
+                      maxLength={15}
                       className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
                     />
+                    <p className="text-xs text-slate-500 mt-1">
+                      Formato: (11) 99999-9999 ou (11) 9999-9999
+                    </p>
                   </div>
                 </div>
               </div>
