@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -28,10 +30,32 @@ export default function Home() {
             <a href="#empresa" className="hover:text-orange-600 transition-colors">Empresa</a>
             <a href="#clientes" className="hover:text-orange-600 transition-colors">Clientes</a>
             <a href="#servicos" className="hover:text-orange-600 transition-colors">Serviços</a>
+            <a href="#contato" className="hover:text-orange-600 transition-colors">Contato</a>
             <Link href="/orcamento" className="px-5 py-2.5 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors">
               Orçamento
             </Link>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden text-slate-800" 
+            onClick={() => {
+              const menu = document.getElementById('mobile-menu')
+              if (menu) menu.classList.toggle('hidden')
+            }}
+          >
+            <span className="text-2xl">☰</span>
+          </button>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        <div id="mobile-menu" className="hidden absolute top-full left-0 w-full bg-white border-t md:hidden flex-col shadow-lg">
+          <a href="#home" className="block px-6 py-4 border-b hover:bg-slate-50">Home</a>
+          <a href="#empresa" className="block px-6 py-4 border-b hover:bg-slate-50">Empresa</a>
+          <a href="#clientes" className="block px-6 py-4 border-b hover:bg-slate-50">Clientes</a>
+          <a href="#servicos" className="block px-6 py-4 border-b hover:bg-slate-50">Serviços</a>
+          <a href="#contato" className="block px-6 py-4 border-b hover:bg-slate-50">Contato</a>
+          <Link href="/orcamento" className="block px-6 py-4 bg-orange-50 text-orange-600 font-bold">Orçamento</Link>
         </div>
       </header>
 
@@ -230,6 +254,117 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold mb-3 text-slate-900">Peças Seriadas</h3>
               <p className="text-slate-600">Produção de lotes de peças conforme desenho ou amostra, atendendo rigorosos padrões de qualidade.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contato e Localização */}
+      <section id="contato" className="py-24 bg-slate-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 inline-block section-title">Entre em Contato</h2>
+            <p className="text-slate-600 mt-4">Estamos prontos para atender sua demanda com agilidade e qualidade.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Informações de Contato */}
+            <div>
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="text-orange-600 flex-shrink-0 mt-1">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Telefone</h3>
+                    <a href="tel:+557932052272" className="text-slate-600 hover:text-orange-600 transition-colors">
+                      +55 (79) 3205-2272
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="text-orange-600 flex-shrink-0 mt-1">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Email</h3>
+                    <a href="mailto:comercial@nardelliusinagem.com" className="text-slate-600 hover:text-orange-600 transition-colors">
+                      comercial@nardelliusinagem.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="text-orange-600 flex-shrink-0 mt-1">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Endereço</h3>
+                    <p className="text-slate-600">
+                      Rua 21 de abril, 230<br />
+                      Dezoito do Forte<br />
+                      Aracaju - Sergipe, 49072-760
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="text-orange-600 flex-shrink-0 mt-1">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 mb-1">Horário de Funcionamento</h3>
+                    <p className="text-slate-600">
+                      Segunda a Sexta: 8h às 18h<br />
+                      Sábado: 8h às 12h
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mapa */}
+            <div className="relative">
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=Rua+21+de+abril+230+Dezoito+do+Forte+Aracaju+Sergipe" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block relative group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl z-10 flex items-center justify-center">
+                  <div className="bg-white text-slate-900 px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Abrir no Google Maps
+                  </div>
+                </div>
+                <div className="relative rounded-xl overflow-hidden shadow-lg border-4 border-white h-full min-h-[400px]">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.7891234567!2d-37.0789!3d-10.9234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDU1JzI0LjIiUyAzN8KwMDQnNDQuMCJX!5e0!3m2!1spt-BR!2sbr!4v1234567890"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, minHeight: '400px' }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="pointer-events-none group-hover:pointer-events-auto"
+                  ></iframe>
+                </div>
+              </a>
+              <p className="text-center text-sm text-slate-500 mt-4">
+                Clique no mapa para abrir no Google Maps
+              </p>
             </div>
           </div>
         </div>
