@@ -29,7 +29,7 @@ export default function Home() {
             <a href="#home" className="hover:text-orange-600 transition-colors">Home</a>
             <a href="#empresa" className="hover:text-orange-600 transition-colors">Empresa</a>
             <a href="#clientes" className="hover:text-orange-600 transition-colors">Clientes</a>
-            <a href="#servicos" className="hover:text-orange-600 transition-colors">Serviços</a>
+            <Link href="/servicos" className="hover:text-orange-600 transition-colors">Serviços</Link>
             <a href="#contato" className="hover:text-orange-600 transition-colors">Contato</a>
             <Link href="/orcamento" className="px-5 py-2.5 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors">
               Orçamento
@@ -53,7 +53,7 @@ export default function Home() {
           <a href="#home" className="block px-6 py-4 border-b hover:bg-slate-50">Home</a>
           <a href="#empresa" className="block px-6 py-4 border-b hover:bg-slate-50">Empresa</a>
           <a href="#clientes" className="block px-6 py-4 border-b hover:bg-slate-50">Clientes</a>
-          <a href="#servicos" className="block px-6 py-4 border-b hover:bg-slate-50">Serviços</a>
+          <Link href="/servicos" className="block px-6 py-4 border-b hover:bg-slate-50">Serviços</Link>
           <a href="#contato" className="block px-6 py-4 border-b hover:bg-slate-50">Contato</a>
           <Link href="/orcamento" className="block px-6 py-4 bg-orange-50 text-orange-600 font-bold">Orçamento</Link>
         </div>

@@ -322,7 +322,7 @@ export default function Orcamento() {
             <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
             <Link href="/#empresa" className="hover:text-orange-600 transition-colors">Empresa</Link>
             <Link href="/#clientes" className="hover:text-orange-600 transition-colors">Clientes</Link>
-            <Link href="/#servicos" className="hover:text-orange-600 transition-colors">Serviços</Link>
+            <Link href="/servicos" className="hover:text-orange-600 transition-colors">Serviços</Link>
             <span className="px-5 py-2.5 bg-orange-600 text-white rounded">Orçamento</span>
           </nav>
 
