@@ -183,7 +183,7 @@ export default function Servicos() {
           {/* Desktop Menu */}
           <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
-            <Link href="/#empresa" className="hover:text-orange-600 transition-colors">Empresa</Link>
+            <Link href="/empresa" className="hover:text-orange-600 transition-colors">Empresa</Link>
             <Link href="/#clientes" className="hover:text-orange-600 transition-colors">Clientes</Link>
             <span className="text-orange-600 font-bold">Serviços</span>
             <Link href="/#contato" className="hover:text-orange-600 transition-colors">Contato</Link>
@@ -208,7 +208,7 @@ export default function Servicos() {
         <div id="mobile-menu" className="hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm md:hidden flex-col shadow-xl rounded-b-lg mx-2 mt-2 overflow-hidden">
           <div className="py-2">
             <Link href="/" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Home</Link>
-            <Link href="/#empresa" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Empresa</Link>
+            <Link href="/empresa" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Empresa</Link>
             <Link href="/#clientes" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Clientes</Link>
             <span className="block px-6 py-3 text-orange-600 font-semibold bg-orange-50">Serviços</span>
             <Link href="/#contato" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Contato</Link>
