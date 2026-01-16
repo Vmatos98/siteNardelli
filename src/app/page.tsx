@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 // WhatsApp Chat Component
 function WhatsAppChat() {
@@ -159,6 +159,114 @@ function WhatsAppChat() {
   )
 }
 
+// Componente de Clientes com Slides por Categoria
+function ClientesSection() {
+  const [categoriaAtiva, setCategoriaAtiva] = useState('petroleo_gas')
+
+  const clientesPorSetor = {
+    petroleo_gas: {
+      nome: 'Petróleo, Gás & Energia',
+      clientes: ['Petrobras', 'Eneva', 'Carmo Energy', 'Sergas', 'Energisa', 'Mandacaru Energia']
+    },
+    construcao: {
+      nome: 'Construção Civil',
+      clientes: ['Construtora Celi', 'União Engenharia', 'Norcon Rossi', 'Moura Dubeux', 'Construtora Jotanunes', 'Heca Construtora']
+    },
+    textil: {
+      nome: 'Indústria Têxtil',
+      clientes: ['Sergifil', 'Colortextil Nordeste', 'Grupo Constâncio Vieira', 'Santista']
+    },
+    alimenticia: {
+      nome: 'Alimentícia',
+      clientes: ['Grupo Maratá', 'Natulact', 'Duas Rodas', 'Solar Coca-Cola', 'Ambev']
+    },
+    mineracao: {
+      nome: 'Mineração',
+      clientes: ['Mosaic Fertilizantes', 'Votorantim Cimentos', 'InterCement', 'Mineradora Jundu']
+    }
+  }
+
+  const categorias = Object.keys(clientesPorSetor)
+  const categoriaData = clientesPorSetor[categoriaAtiva as keyof typeof clientesPorSetor]
+
+  // Auto-rotação de categorias a cada 45 segundos
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      const currentIndex = categorias.indexOf(categoriaAtiva)
+      const nextIndex = (currentIndex + 1) % categorias.length
+      setCategoriaAtiva(categorias[nextIndex])
+    }, 45000) // 45 segundos
+
+    return () => clearInterval(timer)
+  }, [categoriaAtiva, categorias])
+
+  const mudarCategoria = (categoria: string) => {
+    setCategoriaAtiva(categoria)
+  }
+
+  // Mostra até 6 clientes (2 linhas x 3 colunas)
+  const clientesVisiveis = categoriaData.clientes.slice(0, 6)
+
+  return (
+    <section id="clientes" className="py-24 bg-slate-50 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-white -skew-x-12 opacity-50 z-0"></div>
+      
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 section-title inline-block">Nossos Clientes</h2>
+          <p className="text-slate-600 text-lg">
+            A confiança de grandes marcas se conquista com precisão, prazo e responsabilidade. Atendemos diversos setores da indústria.
+          </p>
+        </div>
+
+        {/* Categorias */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {Object.entries(clientesPorSetor).map(([key, setor]) => (
+            <button
+              key={key}
+              onClick={() => mudarCategoria(key)}
+              className={`px-6 py-3 rounded-full font-semibold transition-all ${
+                categoriaAtiva === key
+                  ? 'text-white shadow-lg scale-105'
+                  : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+              }`}
+              style={categoriaAtiva === key ? { background: '#1D293D' } : {}}
+            >
+              {setor.nome}
+            </button>
+          ))}
+        </div>
+
+        {/* Grid de Clientes - 2 linhas x 3 colunas */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {clientesVisiveis.map((cliente, index) => (
+            <div
+              key={`${categoriaAtiva}-${index}`}
+              className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-center border-2 border-transparent hover:border-[#1D293D] animate-fade-in"
+            >
+              <div className="text-center">
+                <div className="text-2xl font-bold mb-2" style={{ color: '#1D293D' }}>
+                  {cliente}
+                </div>
+                <div className="text-xs text-slate-500 uppercase tracking-wider">{categoriaData.nome}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <Link href="/orcamento" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg">
+            Seja nosso cliente
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   return (
     <div className="bg-slate-50 text-slate-800">
@@ -184,7 +292,6 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <a href="#home" className="hover:text-orange-600 transition-colors">Home</a>
             <Link href="/empresa" className="hover:text-orange-600 transition-colors">Empresa</Link>
-            <a href="#clientes" className="hover:text-orange-600 transition-colors">Clientes</a>
             <Link href="/servicos" className="hover:text-orange-600 transition-colors">Serviços</Link>
             <a href="#contato" className="hover:text-orange-600 transition-colors">Contato</a>
             <Link href="/orcamento" className="px-5 py-2.5 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors">
@@ -209,7 +316,6 @@ export default function Home() {
           <div className="py-2">
             <a href="#home" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Home</a>
             <Link href="/empresa" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Empresa</Link>
-            <a href="#clientes" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Clientes</a>
             <Link href="/servicos" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Serviços</Link>
             <a href="#contato" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Contato</a>
             <div className="mx-4 my-2 h-px bg-slate-200"></div>
@@ -315,7 +421,7 @@ export default function Home() {
               <p className="text-slate-600 leading-relaxed mb-8">
                 Não é à toa que grandes empresas firmaram parceria sólida conosco. Unimos tradição, processos de produção seguros e preços competitivos para atender as demandas mais exigentes do mercado sergipano e nacional.
               </p>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <li className="flex items-center gap-3 text-slate-700 font-medium">
                   ✅ Preços Competitivos
                 </li>
@@ -329,59 +435,20 @@ export default function Home() {
                   ✅ Equipe Especializada
                 </li>
               </ul>
+              <Link href="/empresa" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-md">
+                Conheça Mais
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* Clientes */}
-      <section id="clientes" className="py-24 bg-slate-50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-white -skew-x-12 opacity-50 z-0"></div>
-        
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div className="max-w-xl">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 inline-block section-title">Nossos Clientes</h2>
-              <p className="text-slate-600 mt-4 text-lg">
-                A confiança de grandes marcas se conquista com precisão, prazo e responsabilidade. Orgulhosamente atendemos alguns dos maiores nomes da indústria nacional.
-              </p>
-            </div>
-            <Link href="/orcamento" className="hidden md:inline-flex items-center gap-2 text-orange-600 font-semibold hover:text-orange-800 transition-colors">
-              Seja nosso cliente →
-            </Link>
-          </div>
-          
-          {/* Grid de Clientes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="group bg-white hover:bg-slate-50 border border-slate-200 hover:border-orange-300 p-10 rounded-xl flex items-center justify-center shadow-sm hover:shadow-xl transition-all duration-300 h-48">
-              <div className="flex flex-col items-center gap-3">
-                <div className="text-3xl font-extrabold text-slate-400 group-hover:text-[#008542] transition-colors flex items-center gap-2 tracking-tighter">
-                  <span className="text-4xl">BR</span> PETROBRAS
-                </div>
-                <div className="h-1 w-12 bg-slate-200 group-hover:bg-[#008542] transition-all rounded-full"></div>
-              </div>
-            </div>
-
-            <div className="group bg-white hover:bg-slate-50 border border-slate-200 hover:border-orange-300 p-10 rounded-xl flex items-center justify-center shadow-sm hover:shadow-xl transition-all duration-300 h-48">
-              <div className="flex flex-col items-center gap-3">
-                <div className="text-3xl font-extrabold text-slate-400 group-hover:text-blue-800 transition-colors uppercase tracking-wide text-center leading-none">
-                  Varco<br /><span className="text-xl">National</span>
-                </div>
-                <div className="h-1 w-12 bg-slate-200 group-hover:bg-blue-800 transition-all rounded-full"></div>
-              </div>
-            </div>
-
-            <div className="group bg-white hover:bg-slate-50 border border-slate-200 hover:border-orange-300 p-10 rounded-xl flex items-center justify-center shadow-sm hover:shadow-xl transition-all duration-300 h-48">
-              <div className="flex flex-col items-center gap-3">
-                <div className="text-2xl font-extrabold text-slate-400 group-hover:text-red-700 transition-colors uppercase tracking-widest text-center">
-                  Constâncio<br />Vieira
-                </div>
-                <div className="h-1 w-12 bg-slate-200 group-hover:bg-red-700 transition-all rounded-full"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ClientesSection />
+      
 
       {/* Serviços */}
       <section id="servicos" className="py-24 bg-white">
@@ -391,13 +458,13 @@ export default function Home() {
             <p className="text-slate-600 mt-4">Utilizamos equipamentos modernos para garantir a máxima precisão em cada peça produzida.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
               <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors shadow-sm">
                 <span className="text-2xl">⚙️</span>
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Torno CNC</h3>
-              <p className="text-slate-600">Usinagem de peças complexas com alta precisão e repetibilidade garantida por controle numérico computadorizado.</p>
+              <h3 className="text-xl font-bold mb-3 text-slate-900">Fabricação Sob Demanda</h3>
+              <p className="text-slate-600">Desenvolvimento e fabricação de peças personalizadas conforme suas especificações e necessidades.</p>
             </div>
 
             <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
@@ -415,6 +482,15 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-3 text-slate-900">Peças Seriadas</h3>
               <p className="text-slate-600">Produção de lotes de peças conforme desenho ou amostra, atendendo rigorosos padrões de qualidade.</p>
             </div>
+          </div>
+
+          <div className="text-center">
+            <Link href="/servicos" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg">
+              Conheça Nossos Serviços em Detalhes
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>
@@ -545,7 +621,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-slate-800 text-sm text-center">
-            <p>&copy; 2024 Nardelli Usinagem. Todos os direitos reservados.</p>
+            <p>&copy; 2026 Nardelli Usinagem. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
