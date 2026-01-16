@@ -136,7 +136,6 @@ export default function Empresa() {
           <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
             <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
             <span className="text-orange-600 font-bold">Empresa</span>
-            <Link href="/#clientes" className="hover:text-orange-600 transition-colors">Clientes</Link>
             <Link href="/servicos" className="hover:text-orange-600 transition-colors">Serviços</Link>
             <Link href="/#contato" className="hover:text-orange-600 transition-colors">Contato</Link>
             <Link href="/orcamento" className="px-5 py-2.5 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors">Orçamento</Link>
@@ -152,7 +151,6 @@ export default function Empresa() {
           <div className="py-2">
             <Link href="/" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Home</Link>
             <span className="block px-6 py-3 text-orange-600 font-semibold bg-orange-50">Empresa</span>
-            <Link href="/#clientes" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Clientes</Link>
             <Link href="/servicos" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Serviços</Link>
             <Link href="/#contato" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Contato</Link>
             <div className="mx-4 my-2 h-px bg-slate-200"></div>
