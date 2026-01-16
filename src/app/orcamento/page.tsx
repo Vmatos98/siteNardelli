@@ -30,6 +30,7 @@ function WhatsAppChat() {
   }
 
   const handleSendMessage = () => {
+    if (!selectedDepartment) return
     const dept = departments[selectedDepartment as keyof typeof departments]
     const encodedMessage = encodeURIComponent(message || 'Olá! Gostaria de mais informações.')
     const whatsappUrl = `https://wa.me/${dept.phone}?text=${encodedMessage}`
@@ -169,6 +170,23 @@ interface FormData {
   [key: string]: string
 }
 
+interface FieldConfig {
+  key: string
+  label: string
+  type: string
+  options?: string[]
+  placeholder?: string
+  required?: boolean
+  unit?: string
+  source?: string
+}
+
+interface CategoryConfig {
+  id: string
+  label: string
+  campos: FieldConfig[]
+}
+
 const formConfig = {
   listasGlobais: {
     materiais: [
@@ -287,7 +305,7 @@ export default function Orcamento() {
     observacoes: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<unknown>(null)
+  const [selectedCategory, setSelectedCategory] = useState<CategoryConfig | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -335,7 +353,7 @@ export default function Orcamento() {
     }))
     
     const category = formConfig.categorias.find(c => c.id === categoryId)
-    setSelectedCategory(category)
+    setSelectedCategory(category || null)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -400,7 +418,7 @@ export default function Orcamento() {
   const renderDynamicFields = () => {
     if (!selectedCategory) return null
 
-    return selectedCategory.campos.map((campo: unknown) => {
+    return selectedCategory.campos.map((campo) => {
       let labelText = campo.label
       if (campo.unit) labelText += ` (${campo.unit})`
       if (campo.required) labelText += ' *'
