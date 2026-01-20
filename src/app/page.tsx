@@ -199,7 +199,7 @@ function DiferenciaisSlider() {
           </div>
 
           {/* Conteúdo Sobreposto */}
-          <div className="absolute inset-0 flex flex-col justify-end md:justify-center p-8 md:p-16 z-10">
+          <div className="absolute inset-0 flex flex-col justify-end md:justify-center px-8 pt-8 pb-24 md:p-16 z-10">
             <div className="max-w-2xl animate-fade-in-up">
               <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest text-orange-400 uppercase bg-black/40 backdrop-blur-sm rounded-full border border-orange-500/30">
                 Nossos Diferenciais
@@ -222,7 +222,7 @@ function DiferenciaisSlider() {
           </div>
 
           {/* Navegação por Pontos */}
-          <div className="absolute bottom-8 right-8 md:right-16 flex gap-3 z-20">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:bottom-8 md:right-16 flex gap-3 z-20">
             {diferenciais.map((_, index) => (
               <button
                 key={index}
@@ -371,7 +371,7 @@ export default function Home() {
       {/* Hero Section */}
       <section id="home" className="hero-bg min-h-screen flex flex-col relative pb-32">
         <div className="container mx-auto px-6 text-center text-white z-10 flex-grow flex flex-col justify-center pt-24">
-          <span className="inline-block self-center px-4 py-2 mt-10 mb-6 text-sm font-semibold tracking-wider text-orange-300 uppercase bg-slate-800/80 rounded-full border-[1px] border-orange-500/50 backdrop-blur-sm">
+          <span className="inline-block self-center px-4 py-2 mt-20 mb-6 text-base font-semibold tracking-wider text-orange-300 uppercase bg-slate-800/80 rounded-full border-[1px] border-orange-500/50 backdrop-blur-sm">
             Desde 1991
           </span>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
@@ -382,7 +382,7 @@ export default function Home() {
             Soluções completas em usinagem de precisão, torno CNC e manutenção industrial para grandes empresas.
           </p>
           
-          <div className="flex flex-col md:flex-row gap-4 justify-center mb-24">
+          <div className="flex flex-col md:flex-row gap-4 justify-center mb-32">
             <Link href="/orcamento" className="px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded font-semibold transition-all shadow-lg shadow-orange-900/50 flex items-center justify-center gap-2">
               Solicitar Cotação
             </Link>
