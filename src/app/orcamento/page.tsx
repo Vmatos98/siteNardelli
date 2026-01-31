@@ -11,6 +11,7 @@ interface FormData {
   telefone: string
   itemType: string
   observacoes: string
+  origem: string
   [key: string]: string
 }
 
@@ -62,6 +63,16 @@ const formConfig = {
     ]
   },
   categorias: [
+    {
+      id: "manutencao",
+      label: "Manutenção",
+      campos: [
+        { key: "objeto_manutencao", label: "Objeto", type: "select", options: ["Redutor", "Bomba", "Válvula", "Outros"], required: true },
+        { key: "modelo", label: "Modelo", type: "text", placeholder: "Ex: SEW R57, KSB Cent, etc", required: false },
+        { key: "fabricante", label: "Fabricante", type: "text", placeholder: "Ex: SEW, KSB, etc", required: false },
+        { key: "servico", label: "Serviço", type: "select", source: "servicos", required: true }
+      ]
+    },
     {
       id: "engrenagem",
       label: "Engrenagem",
@@ -146,7 +157,8 @@ export default function Orcamento() {
     email: '',
     telefone: '',
     itemType: '',
-    observacoes: ''
+    observacoes: '',
+    origem: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<CategoryConfig | null>(null)
@@ -162,12 +174,12 @@ export default function Orcamento() {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '') // Remove tudo que não é dígito
-    
+
     // Limita a 11 dígitos (celular) ou 10 dígitos (fixo)
     if (value.length > 11) {
       value = value.slice(0, 11)
     }
-    
+
     // Aplica a máscara
     if (value.length >= 11) {
       // Celular: (11) 99999-9999
@@ -182,7 +194,7 @@ export default function Orcamento() {
       // Parcial: (11) 
       value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2')
     }
-    
+
     setFormData(prev => ({
       ...prev,
       telefone: value
@@ -195,7 +207,7 @@ export default function Orcamento() {
       ...prev,
       itemType: categoryId
     }))
-    
+
     const category = formConfig.categorias.find(c => c.id === categoryId)
     setSelectedCategory(category || null)
   }
@@ -209,24 +221,24 @@ export default function Orcamento() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validar telefone
     const phoneDigits = formData.telefone.replace(/\D/g, '')
     if (phoneDigits.length < 10 || phoneDigits.length > 11) {
       alert('Por favor, digite um telefone válido com DDD (10 ou 11 dígitos)')
       return
     }
-    
+
     setIsSubmitting(true)
 
     try {
       const formDataToSend = new FormData()
-      
+
       // Adicionar dados do formulário
       Object.entries(formData).forEach(([key, value]) => {
         formDataToSend.append(key, value)
       })
-      
+
       // Adicionar arquivo se existir
       if (selectedFile) {
         formDataToSend.append('arquivo', selectedFile)
@@ -245,7 +257,8 @@ export default function Orcamento() {
           email: '',
           telefone: '',
           itemType: '',
-          observacoes: ''
+          observacoes: '',
+          origem: ''
         })
         setSelectedCategory(null)
         setSelectedFile(null)
@@ -269,7 +282,7 @@ export default function Orcamento() {
 
       if (campo.type === 'select') {
         let options: string[] = []
-        
+
         if (campo.source && formConfig.listasGlobais[campo.source as keyof typeof formConfig.listasGlobais]) {
           options = formConfig.listasGlobais[campo.source as keyof typeof formConfig.listasGlobais]
         } else if (campo.options) {
@@ -321,9 +334,9 @@ export default function Orcamento() {
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <Image 
-              src="/logo.png" 
-              alt="Nardelli Usinagem" 
+            <Image
+              src="/logo.png"
+              alt="Nardelli Usinagem"
               width={56}
               height={56}
               className="h-12 md:h-14 w-auto object-contain"
@@ -343,8 +356,8 @@ export default function Orcamento() {
           </nav>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden text-slate-800" 
+          <button
+            className="md:hidden text-slate-800"
             onClick={() => {
               const menu = document.getElementById('mobile-menu')
               if (menu) menu.classList.toggle('hidden')
@@ -383,14 +396,14 @@ export default function Orcamento() {
       <section className="py-16 -mt-10 relative z-10">
         <div className="container mx-auto px-6">
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-4xl mx-auto overflow-hidden">
-            
+
             {/* Barra de Progresso Visual */}
             <div className="bg-slate-100 p-1 flex w-full">
               <div className="w-1/2 h-1 bg-orange-500 rounded-full"></div>
             </div>
 
             <form onSubmit={handleSubmit} className="p-8 md:p-12">
-              
+
               {/* Passo 1: Contato */}
               <div className="mb-12">
                 <h3 className="flex items-center gap-3 text-xl font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">
@@ -400,10 +413,10 @@ export default function Orcamento() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Nome Completo *</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       name="nome"
-                      required 
+                      required
                       value={formData.nome}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
@@ -411,8 +424,8 @@ export default function Orcamento() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Empresa</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       name="empresa"
                       value={formData.empresa}
                       onChange={handleInputChange}
@@ -421,10 +434,10 @@ export default function Orcamento() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Email Corporativo *</label>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       name="email"
-                      required 
+                      required
                       value={formData.email}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
@@ -432,10 +445,10 @@ export default function Orcamento() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">Telefone / WhatsApp *</label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       name="telefone"
-                      required 
+                      required
                       value={formData.telefone}
                       onChange={handlePhoneChange}
                       placeholder="(00) 00000-0000"
@@ -455,10 +468,10 @@ export default function Orcamento() {
                   <span className="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">2</span>
                   Especificações da Peça
                 </h3>
-                
+
                 <div className="mb-8">
                   <label className="block text-sm font-bold text-slate-800 mb-3">O que você precisa usinar?</label>
-                  <select 
+                  <select
                     value={formData.itemType}
                     onChange={handleCategoryChange}
                     className="w-full px-4 py-4 text-lg rounded-lg border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 outline-none transition-all bg-white cursor-pointer"
@@ -484,15 +497,15 @@ export default function Orcamento() {
                   <span className="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">3</span>
                   Informações Adicionais
                 </h3>
-                
+
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-slate-700 mb-2">Desenho Técnico ou Foto (Opcional)</label>
                   <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer group">
-                    <input 
-                      type="file" 
+                    <input
+                      type="file"
                       accept="image/*,.pdf,.dwg,.dxf"
                       onChange={handleFileChange}
-                      className="hidden" 
+                      className="hidden"
                       id="file-upload"
                     />
                     <label htmlFor="file-upload" className="cursor-pointer">
@@ -509,14 +522,33 @@ export default function Orcamento() {
                   </div>
                 </div>
 
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Por onde nos conheceu?</label>
+                  <select
+                    name="origem"
+                    value={formData.origem}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all bg-white"
+                  >
+                    <option value="">Selecione...</option>
+                    <option value="Recomendação">Recomendação</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="YouTube">YouTube</option>
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Google">Google</option>
+                    <option value="Outros">Outros</option>
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">Observações Gerais</label>
-                  <textarea 
-                    rows={4} 
+                  <textarea
+                    rows={4}
                     name="observacoes"
                     value={formData.observacoes}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all" 
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
                     placeholder="Quantidade, prazos ou detalhes específicos..."
                   />
                 </div>
@@ -524,12 +556,12 @@ export default function Orcamento() {
 
               {/* Botão de Envio */}
               <div className="pt-6 border-t border-slate-100">
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full md:w-auto md:px-12 py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-bold rounded-lg shadow-lg shadow-orange-900/20 transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? 'Enviando...' : 'Enviar Solicitação de Orçamento'} 
+                  {isSubmitting ? 'Enviando...' : 'Enviar Solicitação de Orçamento'}
                   {!isSubmitting && <span>📤</span>}
                 </button>
               </div>
