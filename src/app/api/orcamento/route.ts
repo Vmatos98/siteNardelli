@@ -23,7 +23,7 @@ async function enviarConfirmacaoCliente(dados: any) {
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.hostinger.com',
       port: Number(process.env.EMAIL_PORT) || 465,
-      secure: true, 
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -76,10 +76,11 @@ export async function POST(request: NextRequest) {
     const telefone = formData.get('telefone') as string;
     const itemType = formData.get('itemType') as string;
     const observacoes = formData.get('observacoes') as string || '';
+    const origem = formData.get('origem') as string || '';
     const arquivo = formData.get('arquivo') as File | null;
 
     // Campos Dinâmicos
-    const camposIgnorar = ['nome', 'empresa', 'email', 'telefone', 'itemType', 'observacoes', 'arquivo'];
+    const camposIgnorar = ['nome', 'empresa', 'email', 'telefone', 'itemType', 'observacoes', 'origem', 'arquivo'];
     const dynamicFields: { [key: string]: string } = {};
 
     for (const [key, value] of formData.entries()) {
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Criar Pasta
     const folderName = `[${itemType.toUpperCase()}] ${nome} - ${empresa}`;
-    
+
     const folderMetadata = {
       name: `${folderName} - ${timestamp}`,
       mimeType: 'application/vnd.google-apps.folder',
@@ -138,6 +139,7 @@ Nome:     ${nome}
 Empresa:  ${empresa}
 Email:    ${email}
 Telefone: ${telefone}
+Origem:   ${origem || 'Não informado'}
 
 ESPECIFICAÇÕES (${itemType.toUpperCase()})
 -----------------------
@@ -185,10 +187,10 @@ ${observacoes}
       nome, email, itemType
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Orçamento enviado com sucesso!',
-      folderId 
+      folderId
     });
 
   } catch (error: any) {
