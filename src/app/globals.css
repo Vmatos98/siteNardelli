@@ -47,3 +47,22 @@ body {
 .animate-fade-in {
   animation: fade-in 0.5s ease-out;
 }
+
+/* Career Page Styles */
+.career-hero {
+  background-image: linear-gradient(rgba(15, 23, 42, 0.9), rgba(234, 88, 12, 0.3)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.job-card {
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.job-card:hover {
+  border-left-color: #EA580C;
+  transform: translateX(5px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
