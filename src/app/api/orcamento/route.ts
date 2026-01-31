@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { google } from 'googleapis'
-import { Readable } from 'stream'
+import { NextRequest, NextResponse } from 'next/server';
+import { google } from 'googleapis';
+import { Readable } from 'stream';
+import nodemailer from 'nodemailer';
 
-// Função auxiliar para converter Buffer em Stream
+// --- CONFIGURAÇÕES E HELPERS ---
+
 function bufferToStream(buffer: Buffer) {
   const stream = new Readable();
   stream.push(buffer);
@@ -10,42 +12,91 @@ function bufferToStream(buffer: Buffer) {
   return stream;
 }
 
+// Função de envio de e-mail (Auto-resposta para o Cliente)
+async function enviarConfirmacaoCliente(dados: any) {
+  try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn('⚠️ Credenciais de e-mail não configuradas. Pulando envio.');
+      return;
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST || 'smtp.hostinger.com',
+      port: Number(process.env.EMAIL_PORT) || 465,
+      secure: true, 
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: { rejectUnauthorized: false }
+    });
+
+    const mailOptions = {
+      from: `"Nardelli Usinagem" <${process.env.EMAIL_USER}>`,
+      to: dados.email, // Envia DIRETAMENTE para o cliente
+      // Opcional: Se você quiser receber uma cópia oculta para saber que chegou:
+      // bcc: process.env.EMAIL_USER, 
+      subject: `Recebemos sua solicitação de orçamento: ${dados.itemType}`,
+      text: `Olá ${dados.nome},\n\nRecebemos sua solicitação e entraremos em contato em breve.\n\nAtenciosamente,\nEquipe Nardelli Usinagem`, // Versão texto puro
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
+          <h2 style="color: #ea580c;">Solicitação Recebida</h2>
+          
+          <p>Olá <strong>${dados.nome}</strong>,</p>
+          
+          <p>Recebemos sua solicitação de orçamento para <strong>${dados.itemType}</strong> e entraremos em contato em breve.</p>
+          
+          <p>Seus dados e arquivos já foram encaminhados para nossa equipe técnica para análise.</p>
+          
+          <br>
+          <p>Atenciosamente,<br>
+          <strong>Equipe Nardelli Usinagem</strong></p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`📧 E-mail de confirmação enviado para ${dados.email}`);
+
+  } catch (error) {
+    console.error('❌ Erro ao enviar email:', error);
+  }
+}
+
+// --- FUNÇÃO PRINCIPAL (API) ---
+
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    
-    // 1. Campos Padrão (Fixos)
-    const nome = formData.get('nome') as string
-    const empresa = formData.get('empresa') as string || 'Não informada'
-    const email = formData.get('email') as string
-    const telefone = formData.get('telefone') as string
-    const itemType = formData.get('itemType') as string
-    const observacoes = formData.get('observacoes') as string || 'Nenhuma observação'
-    const arquivo = formData.get('arquivo') as File | null
-    
-    // 2. Captura INTELIGENTE dos campos dinâmicos
-    // Criamos uma lista negra apenas dos campos que já pegamos acima
-    const camposPadrao = ['nome', 'empresa', 'email', 'telefone', 'itemType', 'observacoes', 'arquivo'];
-    
-    const dynamicFields: { [key: string]: string } = {}
-    
-    // Iteramos sobre TUDO que veio do formulário
+    const formData = await request.formData();
+
+    // 1. Extração de Dados
+    const nome = formData.get('nome') as string;
+    const empresa = formData.get('empresa') as string || 'Particular';
+    const email = formData.get('email') as string;
+    const telefone = formData.get('telefone') as string;
+    const itemType = formData.get('itemType') as string;
+    const observacoes = formData.get('observacoes') as string || '';
+    const arquivo = formData.get('arquivo') as File | null;
+
+    // Campos Dinâmicos
+    const camposIgnorar = ['nome', 'empresa', 'email', 'telefone', 'itemType', 'observacoes', 'arquivo'];
+    const dynamicFields: { [key: string]: string } = {};
+
     for (const [key, value] of formData.entries()) {
-      // Se a chave NÃO for um campo padrão e tiver valor preenchido
-      if (!camposPadrao.includes(key) && value && value.toString().trim() !== '') {
-        // Formata a chave para ficar bonita no texto (ex: dimensao_diametro -> Dimensao Diametro)
-        const labelFormatada = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-        dynamicFields[labelFormatada] = value as string;
+      if (!camposIgnorar.includes(key) && value && value.toString().trim() !== '') {
+        const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+        dynamicFields[label] = value as string;
       }
     }
 
-    // LOG DE DEBUG (Olhe isso no seu terminal quando enviar)
-    console.log("--- DADOS RECEBIDOS ---");
-    console.log("Cliente:", nome);
-    console.log("Peça:", itemType);
-    console.log("Campos Específicos detectados:", dynamicFields); // <--- Verifique se seus dados aparecem aqui
+    console.log(`🚀 Processando: ${nome} - ${itemType}`);
 
-    // --- CONFIGURAÇÃO OAUTH2 (A mesma que já funcionou) ---
+    // 2. Configuração do Google Drive (OAuth2)
+    // Nota: O Next.js lê o .env automaticamente
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_REFRESH_TOKEN) {
+      throw new Error('Credenciais do Google Drive não configuradas no .env');
+    }
+
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET
@@ -56,13 +107,11 @@ export async function POST(request: NextRequest) {
     });
 
     const drive = google.drive({ version: 'v3', auth: oauth2Client });
-    
     const timestamp = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-    
-    // Nome da Pasta: NOME - EMPRESA - TIPO DE PEÇA
-    const folderName = `${nome} - ${empresa} - ${itemType.toUpperCase()}`;
 
     // 3. Criar Pasta
+    const folderName = `[${itemType.toUpperCase()}] ${nome} - ${empresa}`;
+    
     const folderMetadata = {
       name: `${folderName} - ${timestamp}`,
       mimeType: 'application/vnd.google-apps.folder',
@@ -76,41 +125,35 @@ export async function POST(request: NextRequest) {
 
     const folderId = folder.data.id;
 
-    // 4. Montar o Texto do Arquivo (Com formatação melhorada)
-    // Transforma o objeto dynamicFields em texto lista
+    // 4. Salvar TXT
     const especificacoesTexto = Object.entries(dynamicFields)
-      .map(([key, value]) => `- ${key}: ${value}`)
+      .map(([k, v]) => `• ${k}: ${v}`)
       .join('\n');
 
-    const textData = `
+    const conteudoTxt = `
 SOLICITAÇÃO DE ORÇAMENTO
 Data: ${timestamp}
 ===================================
-
-DADOS DO CLIENTE
------------------------------------
 Nome:     ${nome}
 Empresa:  ${empresa}
 Email:    ${email}
 Telefone: ${telefone}
 
-DADOS DA PEÇA (${itemType.toUpperCase()})
------------------------------------
+ESPECIFICAÇÕES (${itemType.toUpperCase()})
+-----------------------
 ${especificacoesTexto}
 
-OBSERVAÇÕES GERAIS
------------------------------------
+OBSERVAÇÕES:
 ${observacoes}
     `.trim();
 
     const textStream = new Readable();
-    textStream.push(textData);
+    textStream.push(conteudoTxt);
     textStream.push(null);
 
-    // Salvar arquivo de texto
     await drive.files.create({
       requestBody: {
-        name: 'DETALHES_DO_PEDIDO.txt', // Nome mais claro
+        name: 'DETALHES_DO_PEDIDO.txt',
         parents: [folderId!]
       },
       media: {
@@ -119,7 +162,7 @@ ${observacoes}
       }
     });
 
-    // 5. Salvar Imagem (Se houver)
+    // 5. Upload Anexo
     if (arquivo && arquivo.size > 0) {
       const arrayBuffer = await arquivo.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -137,10 +180,22 @@ ${observacoes}
       });
     }
 
-    return NextResponse.json({ success: true, folderId });
+    // 6. Enviar Confirmação ao Cliente (Sem link do Drive)
+    await enviarConfirmacaoCliente({
+      nome, email, itemType
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Orçamento enviado com sucesso!',
+      folderId 
+    });
 
   } catch (error: any) {
-    console.error('❌ Erro no servidor:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error('❌ Erro crítico:', error);
+    return NextResponse.json(
+      { success: false, error: error.message || 'Erro interno' },
+      { status: 500 }
+    );
   }
 }
