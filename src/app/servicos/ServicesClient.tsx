@@ -8,7 +8,7 @@ import { getMorePhotos, fetchServiceMedia } from './actions'
 export type GalleryItem = {
     id: string
     src: string
-    videoSrc?: string // URL do arquivo de vídeo
+    videoSrc?: string
     alt: string
     width: number
     height: number
@@ -60,34 +60,22 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
     // 🎥 Estado do Player de Vídeo
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
 
-    // 📷 NOVO: Estado do Lightbox de Imagem (guarda o índice da foto atual)
+    // 📷 Estado do Lightbox de Imagem
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
     // --- FUNÇÕES DE NAVEGAÇÃO DO LIGHTBOX ---
-
-    // Funções memoizadas com useCallback para usar no useEffect do teclado
     const handleNextImage = useCallback((e?: React.MouseEvent) => {
-        e?.stopPropagation() // Evita fechar o modal ao clicar na seta
-        setSelectedImageIndex(prev => {
-            if (prev === null || photos.length === 0) return null
-            // Se for a última, volta para a primeira (loop)
-            return prev === photos.length - 1 ? 0 : prev + 1
-        })
+        e?.stopPropagation()
+        setSelectedImageIndex(prev => (prev === null || photos.length === 0) ? null : (prev === photos.length - 1 ? 0 : prev + 1))
     }, [photos.length])
 
     const handlePrevImage = useCallback((e?: React.MouseEvent) => {
         e?.stopPropagation()
-        setSelectedImageIndex(prev => {
-            if (prev === null || photos.length === 0) return null
-            // Se for a primeira, vai para a última (loop)
-            return prev === 0 ? photos.length - 1 : prev - 1
-        })
+        setSelectedImageIndex(prev => (prev === null || photos.length === 0) ? null : (prev === 0 ? photos.length - 1 : prev - 1))
     }, [photos.length])
 
 
     // --- EFEITOS ---
-
-    // Fecha dropdown click fora
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setIsDropdownOpen(false)
@@ -96,23 +84,20 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
-    // ⌨️ NOVO: Navegação por Teclado no Lightbox
+    // ⌨️ Navegação por Teclado
     useEffect(() => {
         if (selectedImageIndex === null) return
-
         function handleKeyDown(event: KeyboardEvent) {
             if (event.key === 'Escape') setSelectedImageIndex(null)
             if (event.key === 'ArrowRight') handleNextImage()
             if (event.key === 'ArrowLeft') handlePrevImage()
         }
-
         document.addEventListener('keydown', handleKeyDown)
-        // Remove o listener quando o modal fecha ou o índice muda
         return () => document.removeEventListener('keydown', handleKeyDown)
     }, [selectedImageIndex, handleNextImage, handlePrevImage])
 
 
-    // Prefetch (Busca em segundo plano)
+    // Prefetch
     useEffect(() => {
         const prefetchFeaturedTabs = async () => {
             const tabsToFetch = finalMainKeys.filter(key => key !== activeTab && !servicesData[key].loaded)
@@ -130,7 +115,7 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
         return () => clearTimeout(timer)
     }, [])
 
-    // Carrega aba atual (Zero-Blocking)
+    // Carrega aba atual
     useEffect(() => {
         if (!currentService) return
         const loadTabMedia = async () => {
@@ -185,47 +170,35 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
                 </div>
             )}
 
-            {/* 📷 NOVO: MODAL DE IMAGEM (LIGHTBOX) */}
+            {/* 📷 MODAL DE IMAGEM (LIGHTBOX) */}
             {selectedImageIndex !== null && photos[selectedImageIndex] && (
                 <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-fade-in backdrop-blur-sm select-none" onClick={() => setSelectedImageIndex(null)}>
-
-                    {/* Botão Fechar */}
                     <button onClick={() => setSelectedImageIndex(null)} className="absolute top-4 right-4 z-50 text-white/70 hover:text-white p-3 bg-black/20 hover:bg-black/40 rounded-full transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
-
-                    {/* Seta Anterior (só mostra se tiver mais de 1 foto) */}
                     {photos.length > 1 && (
                         <button onClick={handlePrevImage} className="absolute left-4 z-50 p-4 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all hidden md:block">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
                     )}
-
-                    {/* Container da Imagem Principal */}
                     <div className="relative w-full h-full max-w-7xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
                         <Image
                             src={photos[selectedImageIndex].src}
                             alt={photos[selectedImageIndex].alt}
                             fill
                             className="object-contain animate-fade-in-fast"
-                            priority // Prioridade alta para carregar rápido no modal
+                            priority
                             sizes="(max-width: 1280px) 100vw, 1280px"
                         />
-                        {/* Legenda Opcional */}
                         {photos[selectedImageIndex].alt && (
-                            <p className="absolute bottom-0 left-0 right-0 text-center text-white/90 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                                {photos[selectedImageIndex].alt}
-                            </p>
+                            <p className="absolute bottom-0 left-0 right-0 text-center text-white/90 p-4 bg-gradient-to-t from-black/80 to-transparent">{photos[selectedImageIndex].alt}</p>
                         )}
                     </div>
-
-                    {/* Seta Próxima */}
                     {photos.length > 1 && (
                         <button onClick={handleNextImage} className="absolute right-4 z-50 p-4 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all hidden md:block">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </button>
                     )}
-                    {/* Contador mobile */}
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm md:hidden font-medium bg-black/30 px-3 py-1 rounded-full">
                         {selectedImageIndex + 1} / {photos.length}
                     </div>
@@ -238,7 +211,7 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
                 <div className="absolute inset-0 bg-slate-800 opacity-50"></div>
                 <div className="container mx-auto relative z-10 text-center animate-fade-in" key={currentService.key}>
                     <span className="text-orange-500 font-bold uppercase tracking-widest text-xs mb-3 block">
-                        {currentService.isFeaturedTab ? 'Destaque' : 'Serviço'}
+                        Serviços
                     </span>
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
                         {currentService.heading}
@@ -249,7 +222,7 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
                 </div>
             </section>
 
-            {/* ABAS (Mantido igual) */}
+            {/* ABAS */}
             <div className="sticky top-[72px] z-40 bg-white border-b border-slate-200 shadow-sm">
                 <div className="container mx-auto px-6">
                     <div className="flex items-center justify-center gap-6 py-4 flex-wrap">
@@ -303,27 +276,39 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
                                         </div>
                                     ))}
                                 </div>
-                                <div className="mt-8 text-center">
+                                {/* <div className="mt-8 text-center">
                                     <a href="/orcamento" className="inline-block px-8 py-3 bg-slate-900 text-white font-semibold rounded hover:bg-slate-800 transition-all">Solicitar Orçamento →</a>
-                                </div>
+                                </div> */}
                             </div>
                         )}
 
-                        {/* Videos */}
+                        {/* Vídeos */}
                         {(currentService.galleryVideos && currentService.galleryVideos.length > 0) && (
                             <div className="border-t border-slate-200 pt-10 mb-12">
                                 <div className="flex items-center justify-between gap-3 mb-6">
-                                    <h3 className="text-2xl font-bold text-slate-900 flex items-center gap-2"><span className="text-orange-600">►</span> Vídeos</h3>
+                                    {/* Ícone SVG no título da sessão */}
+                                    <h3 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-600"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon></svg>
+                                        Vídeos
+                                    </h3>
                                     {currentService.galleryVideos.length > VIDEOS_INITIAL_LIMIT && (
                                         <button onClick={() => setShowAllVideos(!showAllVideos)} className="text-orange-600 font-semibold hover:underline">{showAllVideos ? 'Ver Menos' : 'Ver Todos'}</button>
                                     )}
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                     {(showAllVideos ? currentService.galleryVideos : currentService.galleryVideos.slice(0, VIDEOS_INITIAL_LIMIT)).map((video, index) => (
-                                        <div key={index} onClick={() => setSelectedVideo(video.videoSrc || video.src)} className="group relative h-[250px] rounded-xl overflow-hidden bg-black shadow-md cursor-pointer hover:shadow-xl transition-all">
+                                        <div
+                                            key={index}
+                                            onClick={() => setSelectedVideo(video.videoSrc || video.src)}
+                                            className="group relative h-[250px] rounded-xl overflow-hidden bg-black shadow-md cursor-pointer hover:shadow-xl transition-all"
+                                        >
                                             <Image src={video.src} alt={video.alt} fill className="object-cover opacity-80 group-hover:opacity-60 transition-opacity" />
+
+                                            {/* Ícone de Play Centralizado (SVG) */}
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform"><span className="ml-1">▶</span></div>
+                                                <div className="w-14 h-14 bg-orange-600/90 backdrop-blur-sm rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-all">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -331,23 +316,25 @@ export default function ServicesClient({ servicesData: initialData }: ServicesCl
                             </div>
                         )}
 
-                        {/* 📷 FOTOS (Com clique para abrir o Lightbox) */}
+                        {/* Fotos */}
                         {photos && photos.length > 0 && (
                             <div className="border-t border-slate-200 pt-10">
-                                <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2"><span className="text-slate-500">📷</span> Galeria</h3>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                    Galeria
+                                </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
                                     {photos.map((photo, index) => (
                                         <div
                                             key={index}
-                                            // MUDANÇA AQUI: Ao clicar, define o índice da imagem
                                             onClick={() => setSelectedImageIndex(index)}
                                             className="relative h-64 rounded-xl overflow-hidden bg-slate-200 shadow-md group cursor-pointer hover:shadow-xl transition-all"
                                         >
                                             <Image src={photo.src} alt={photo.alt} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                                            {/* Ícone de ampliar */}
+                                            {/* Ícone de ampliar SVG */}
                                             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <div className="bg-black/50 p-3 rounded-full text-white">
+                                                <div className="bg-black/50 p-3 rounded-full text-white backdrop-blur-sm">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
                                                 </div>
                                             </div>
