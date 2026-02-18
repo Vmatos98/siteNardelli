@@ -15,6 +15,13 @@ export type Album = {
     itemsCount: number;
 };
 
+export type FolderMetadata = {
+    heading?: string;
+    description?: string;
+    capabilities?: string[];
+    featured?: boolean; // <--- Novo campo
+};
+
 // 🔐 Token Manager
 async function getAccessToken() {
     const { MS_CLIENT_ID, MS_CLIENT_SECRET, MS_REFRESH_TOKEN } = process.env;
@@ -130,4 +137,75 @@ export async function getAlbumItems(albumId: string, skip = 0, top = 100): Promi
         console.error(`❌ Erro itens álbum ${albumId}:`, error);
         return [];
     }
+}
+
+// 📝 NOVO: Função que lê o arquivo info.txt dentro da pasta
+export async function getFolderMetadata(folderId: string): Promise<FolderMetadata | null> {
+    const accessToken = await getAccessToken();
+    if (!accessToken) return null;
+
+    // A mágica acontece aqui: ":/info.txt:/content" pega o texto direto
+    const url = `https://graph.microsoft.com/v1.0/me/drive/items/${folderId}:/!info.txt:/content`;
+
+    try {
+        const response = await fetch(url, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            next: { revalidate: 60 } // Cache curto para atualizar textos rápido
+        });
+
+        if (response.status === 404) return null; // Se não tiver arquivo, retorna null (sem erro)
+        if (!response.ok) return null;
+
+        const text = await response.text();
+        return parseMetadataText(text);
+    } catch (error) {
+        console.error(`Erro ao ler info.txt da pasta ${folderId}`, error);
+        return null;
+    }
+}
+
+// 🧠 NOVO: Helper Inteligente para ler o TXT e transformar em Objeto
+function parseMetadataText(text: string): FolderMetadata {
+    const lines = text.split('\n');
+    const metadata: any = {
+        heading: '',
+        description: '',
+        capabilities: [],
+        featured: false // Padrão
+    };
+
+    let currentSection = '';
+
+    lines.forEach(line => {
+        const cleanLine = line.trim();
+        if (!cleanLine) return;
+
+        const lowerLine = cleanLine.toLowerCase();
+
+        if (lowerLine.startsWith('heading:') || lowerLine.startsWith('titulo:')) {
+            metadata.heading = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+            currentSection = 'heading';
+        }
+        else if (lowerLine.startsWith('description:') || lowerLine.startsWith('descricao:')) {
+            metadata.description = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+            currentSection = 'description';
+        }
+        else if (lowerLine.startsWith('capabilities:') || lowerLine.startsWith('capacidades:')) {
+            currentSection = 'capabilities';
+        }
+        // NOVO: Detecta destaque
+        else if (lowerLine.startsWith('destaque:') || lowerLine.startsWith('featured:')) {
+            const value = cleanLine.substring(cleanLine.indexOf(':') + 1).trim().toLowerCase();
+            metadata.featured = value === 'sim' || value === 'yes' || value === 'true';
+        }
+        else if (currentSection === 'capabilities' && (cleanLine.startsWith('-') || cleanLine.startsWith('*'))) {
+            const item = cleanLine.substring(1).trim();
+            if (item) metadata.capabilities.push(item);
+        }
+        else if (currentSection === 'description' && !cleanLine.includes(':')) {
+            metadata.description += ' ' + cleanLine;
+        }
+    });
+
+    return metadata;
 }
