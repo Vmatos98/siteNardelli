@@ -604,25 +604,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-        <div className="container mx-auto px-6 text-center md:text-left">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <h2 className="text-2xl font-bold text-white mb-2">NARDELLI USINAGEM</h2>
-              <p className="text-sm">Produzindo com qualidade e precisão desde 1991.</p>
-            </div>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-white transition-colors">📷</a>
-              <a href="#" className="hover:text-white transition-colors">📘</a>
-              <a href="#" className="hover:text-white transition-colors">📺</a>
-            </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-slate-800 text-sm text-center">
-            <p>&copy; 2026 Nardelli Usinagem. Todos os direitos reservados.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

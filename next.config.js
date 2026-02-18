@@ -14,12 +14,37 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-       {
+      {
         protocol: 'https',
         hostname: 'www.google.com',
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: '**.svc.ms', // Cobre southcentralus1-mediap.svc.ms e outros
+      },
+      {
+        protocol: 'https',
+        hostname: '**.microsoft.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.onedrive.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.sharepoint.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'graph.microsoft.com',
+      },
+      // Adicione este especificamente caso o wildcard falhe em algumas versões antigas
+      {
+        protocol: 'https',
+        hostname: 'southcentralus1-mediap.svc.ms',
+      }
     ],
   },
   env: {
