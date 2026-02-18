@@ -1,6 +1,7 @@
 export type GalleryItem = {
     id: string;
-    url: string;
+    url: string;        // URL da Thumbnail (Capa)
+    videoUrl?: string;  // URL do Arquivo de Vídeo (Novo)
     width: number;
     height: number;
     description: string;
@@ -93,7 +94,6 @@ export async function getAlbumItems(albumId: string, skip = 0, top = 100): Promi
     const accessToken = await getAccessToken();
     if (!accessToken) return [];
 
-    // Seleciona campos específicos para ser mais leve
     const url = `https://graph.microsoft.com/v1.0/me/drive/items/${albumId}/children?select=id,name,description,image,video,file,thumbnails,@microsoft.graph.downloadUrl&expand=thumbnails&top=${top}`;
 
     try {
@@ -105,7 +105,6 @@ export async function getAlbumItems(albumId: string, skip = 0, top = 100): Promi
         const data = await response.json();
         if (!data.value) return [];
 
-        // Filtragem Segura no Código
         const mediaFiles = data.value.filter((file: any) => {
             const isImage = file.image || file.file?.mimeType?.startsWith('image/');
             const isVideo = file.video || file.file?.mimeType?.startsWith('video/');
@@ -117,14 +116,16 @@ export async function getAlbumItems(albumId: string, skip = 0, top = 100): Promi
                 file.thumbnails?.[0]?.medium?.url ||
                 file.thumbnails?.[0]?.small?.url;
 
-            const finalUrl = thumb || file['@microsoft.graph.downloadUrl'];
+            // Link direto para baixar/tocar o arquivo
+            const downloadUrl = file['@microsoft.graph.downloadUrl'];
 
-            // Detecção robusta
+            // Detecção de vídeo
             const isVideo = !!file.video || (file.file?.mimeType?.startsWith('video/'));
 
             return {
                 id: file.id,
-                url: finalUrl,
+                url: thumb || downloadUrl, // Se for vídeo, usa a capa. Se não tiver capa, usa o arquivo.
+                videoUrl: downloadUrl,     // <--- NOVO: Guarda o link do vídeo separadamente
                 name: file.name,
                 description: file.description || '',
                 width: file.image?.width || 1920,

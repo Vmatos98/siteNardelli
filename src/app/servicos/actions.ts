@@ -4,13 +4,34 @@ import { getAlbumItems } from '@/lib/onedrive'
 
 export async function getMorePhotos(albumId: string, skip: number) {
     if (!albumId) return []
-
-    // Busca o próximo lote (traz tudo)
-    // Nota: Como estamos filtrando no JS, o 'skip' pode ficar impreciso se tiver muito vídeo misturado.
-    // O ideal seria usar paginação por cursor (nextLink), mas para manter simples:
-    // Pedimos 100 itens pulando os 'skip' primeiros.
     const items = await getAlbumItems(albumId, skip, 100)
-
-    // Retorna só as fotos para o botão "Carregar Mais Fotos"
     return items.filter(item => !item.isVideo)
+}
+
+export async function fetchServiceMedia(albumId: string) {
+    if (!albumId) return { videos: [], photos: [] }
+
+    const allItems = await getAlbumItems(albumId, 0, 100)
+
+    const videos = allItems.filter(item => item.isVideo).map(v => ({
+        id: v.id,
+        src: v.url,          // Capa (Imagem)
+        videoSrc: v.videoUrl,// Link do Vídeo Real (Novo)
+        alt: v.description || v.name,
+        width: v.width,
+        height: v.height,
+        isVideo: true
+    }))
+
+    const photos = allItems.filter(item => !item.isVideo).map(p => ({
+        id: p.id,
+        src: p.url,
+        alt: p.description || p.name,
+        width: p.width,
+        height: p.height,
+        isVideo: false,
+        featured: p.description?.toLowerCase().includes('#destaque')
+    }))
+
+    return { videos, photos }
 }

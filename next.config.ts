@@ -58,7 +58,10 @@ const nextConfig: NextConfig = {
       }
     ],
   },
-  reactCompiler: true,
+  env: {
+    NEXT_PUBLIC_WHATSAPP_COMERCIAL: process.env.WHATSAPP_COMERCIAL,
+    NEXT_PUBLIC_WHATSAPP_FINANCEIRO: process.env.WHATSAPP_FINANCEIRO,
+  },
 };
 
 export default nextConfig;

@@ -1,8 +1,8 @@
-import { getAlbums, getAlbumItems, getFolderMetadata } from '@/lib/onedrive'
+import { getAlbums, getFolderMetadata } from '@/lib/onedrive'
 import ServicesClient, { ServiceData } from './ServicesClient'
 
 // Configuração estática de Fallback
-// Usada apenas se NÃO existir o arquivo info.txt na pasta do OneDrive.
+// Usada apenas se o OneDrive não tiver o arquivo !info.txt e precisarmos de um texto padrão.
 const baseServicesMetadata: Record<string, Partial<ServiceData>> = {
     'torneamento convencional': {
         heading: 'Torneamento Convencional',
@@ -10,7 +10,7 @@ const baseServicesMetadata: Record<string, Partial<ServiceData>> = {
     },
     'fresamento cnc': {
         heading: 'Fresamento CNC de Alta Performance',
-        description: 'Usinagem de alta precisão.',
+        description: 'Usinagem de alta precisão com centros de usinagem modernos.',
     }
 }
 
@@ -20,98 +20,69 @@ const normalize = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]
 export const dynamic = 'force-dynamic'
 
 export default async function Page() {
-    // 1. Busca todas as pastas na raiz da Galeria
+    // 1. Busca apenas a lista de pastas (Muito Rápido)
     const albums = await getAlbums()
     const servicesData: Record<string, ServiceData> = {}
 
-    console.log(`[OneDrive] Processando ${albums.length} pastas...`)
+    console.log(`[OneDrive] Listando ${albums.length} pastas (Modo Zero-Blocking)...`)
 
-    // 2. Processa cada pasta em paralelo
-    await Promise.all(albums.map(async (album) => {
+    // 2. Busca apenas os textos (!info.txt) em paralelo
+    // Não buscamos fotos aqui para a página abrir instantaneamente.
+    const albumsWithMeta = await Promise.all(albums.map(async (album) => {
+        const txtMetadata = await getFolderMetadata(album.id);
+        return { album, txtMetadata };
+    }));
+
+    // 3. Monta o objeto leve (Tudo loaded: false)
+    albumsWithMeta.forEach(({ album, txtMetadata }) => {
         const serviceKey = album.title;
 
-        // 🚀 Executa 3 buscas simultâneas para máxima velocidade:
-        // 1. Itens (Fotos/Vídeos) limitados a 100
-        // 2. Metadados do arquivo info.txt
-        const [allItems, txtMetadata] = await Promise.all([
-            getAlbumItems(album.id, 0, 100),
-            getFolderMetadata(album.id)
-        ]);
-
-        // Separa vídeos e fotos na memória
-        const videos = allItems.filter(item => item.isVideo);
-        const photos = allItems.filter(item => !item.isVideo);
-
-        // Tenta achar fallback estático (caso não tenha info.txt)
+        // --- LÓGICA DE TEXTOS ---
         const normalizedTitle = normalize(album.title);
         const staticMetaKey = Object.keys(baseServicesMetadata).find(k => normalize(k) === normalizedTitle);
         const staticMeta = staticMetaKey ? baseServicesMetadata[staticMetaKey] : null;
 
-        // --- LÓGICA DE TEXTOS ---
-        const title = album.title; // Título da aba = Nome da Pasta
-
-        const heading = txtMetadata?.heading ||
-            staticMeta?.heading ||
-            album.title;
-
-        const description = txtMetadata?.description ||
-            staticMeta?.description ||
-            'Galeria de projetos e serviços especializados da Nardelli.';
+        // Prioridade: info.txt > staticMeta > Nome da Pasta
+        const heading = txtMetadata?.heading || staticMeta?.heading || album.title;
+        const description = txtMetadata?.description || staticMeta?.description || 'Galeria de projetos e serviços da Nardelli.';
 
         // Capabilities (Lista com ✅)
         const capabilities = (txtMetadata?.capabilities && txtMetadata.capabilities.length > 0)
             ? txtMetadata.capabilities
             : (staticMeta?.capabilities || []);
 
-
-        // --- LÓGICA DE DESTAQUE (Abas vs Ver Mais) ---
+        // --- LÓGICA DE DESTAQUE ---
         let isFeatured = false;
-
         if (txtMetadata?.featured !== undefined) {
-            // 1. Prioridade Máxima: O que está no info.txt (destaque: sim/nao)
             isFeatured = txtMetadata.featured;
         } else {
-            // 2. Automático: Palavras-chave importantes ganham destaque sozinhas
+            // Regra automática se não tiver info.txt
             const nameLower = album.title.toLowerCase();
-            if (nameLower.includes('cnc') ||
-                nameLower.includes('estrutura') ||
-                nameLower.includes('usinagem') ||
-                nameLower.includes('caldeiraria')) {
+            if (nameLower.includes('cnc') || nameLower.includes('estrutura') || nameLower.includes('usinagem')) {
                 isFeatured = true;
             }
         }
 
-        // Monta o objeto final do serviço
         servicesData[serviceKey] = {
             key: serviceKey,
-            title: title,
+            title: album.title,
             heading: heading,
             description: description,
             capabilities: capabilities,
             albumId: album.id,
-            isFeaturedTab: isFeatured, // <--- Passa a decisão para o Front
-            videos: [],
-            galleryVideos: videos.map(v => ({
-                id: v.id,
-                src: v.url,
-                alt: v.description || v.name,
-                width: v.width,
-                height: v.height,
-                isVideo: true
-            })),
-            galleryPhotos: photos.map(p => ({
-                id: p.id,
-                src: p.url,
-                alt: p.description || p.name,
-                width: p.width,
-                height: p.height,
-                isVideo: false,
-                featured: p.description?.toLowerCase().includes('#destaque')
-            }))
-        };
-    }));
+            isFeaturedTab: isFeatured,
 
-    // Ordenação Alfabética das Chaves (para consistência visual)
+            // O SEGREDO DO ZERO-BLOCKING:
+            // Mandamos tudo vazio e "não carregado".
+            // O cliente vai ver isso e chamar a 'action' fetchServiceMedia imediatamente.
+            loaded: false,
+            videos: [],
+            galleryVideos: [],
+            galleryPhotos: []
+        };
+    });
+
+    // Ordenação Alfabética das Chaves
     const orderedServicesData: Record<string, ServiceData> = {};
     Object.keys(servicesData).sort().forEach(key => {
         orderedServicesData[key] = servicesData[key];
@@ -122,9 +93,8 @@ export default async function Page() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-50 pt-20">
                 <div className="text-center p-8 bg-white rounded-xl shadow-sm border border-slate-200">
-                    <h1 className="text-2xl font-bold text-slate-800 mb-2">Galeria Vazia</h1>
-                    <p className="text-slate-600">Nenhuma pasta encontrada no OneDrive.</p>
-                    <p className="text-xs text-slate-400 mt-4">Verifique se o ID da pasta no .env está correto.</p>
+                    <h1 className="text-2xl font-bold text-slate-800 mb-2">Sincronizando Galeria...</h1>
+                    <p className="text-slate-600">Nenhuma pasta encontrada no OneDrive ainda.</p>
                 </div>
             </div>
         )
