@@ -5,6 +5,67 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 
+// Componente de Card de Serviço
+interface ServiceCardProps {
+  title: string
+  description: string
+  image: string
+  badge: {
+    text: string
+    color: string
+  }
+  tags: string[]
+  delay?: number
+}
+
+function ServiceCard({ title, description, image, badge, tags, delay = 0 }: ServiceCardProps) {
+  return (
+    <div
+      className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group border border-slate-100 flex flex-col h-full"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {/* Imagem com Badge */}
+      <div className="relative h-64 overflow-hidden">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div
+          className="absolute bottom-4 left-4 text-xs font-bold px-3 py-1 rounded-full text-white uppercase tracking-wider shadow-sm"
+          style={{ backgroundColor: badge.color }}
+        >
+          {badge.text}
+        </div>
+      </div>
+
+      {/* Conteúdo */}
+      <div className="p-8 flex-grow flex flex-col">
+        <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-orange-600 transition-colors">
+          {title}
+        </h3>
+        <p className="text-slate-600 leading-relaxed mb-6 flex-grow">
+          {description}
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mt-auto">
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Componente de Clientes com Slides por Categoria
 function ClientesSection() {
   const [categoriaAtiva, setCategoriaAtiva] = useState('petroleo_gas')
@@ -447,46 +508,105 @@ export default function Home() {
 
 
       {/* Serviços */}
-      <section id="servicos" className="py-24 bg-slate-50">
+      {/* Serviços */}
+      <section id="servicos" className="py-24 bg-slate-50 relative">
         <div className="container mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 inline-block section-title">Nossos Serviços</h2>
-            <p className="text-slate-600 mt-4">Utilizamos equipamentos modernos para garantir a máxima precisão em cada peça produzida.</p>
+
+          {/* Cabeçalho da Seção */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-orange-600 font-bold tracking-widest uppercase text-sm mb-2 block">
+              Expertise Industrial
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 section-title inline-block">
+              Soluções em Usinagem
+            </h2>
+            <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto">
+              Do protótipo à produção em escala, oferecemos precisão milesimal e acabamento técnico superior.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
-              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors shadow-sm">
-                <span className="text-2xl">⚙️</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Fabricação Sob Demanda</h3>
-              <p className="text-slate-600">Desenvolvimento e fabricação de peças personalizadas conforme suas especificações e necessidades.</p>
-            </div>
-
-            <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
-              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors shadow-sm">
-                <span className="text-2xl">🔧</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Manutenção Industrial</h3>
-              <p className="text-slate-600">Recuperação de peças e componentes mecânicos para manter sua linha de produção sempre ativa.</p>
-            </div>
-
-            <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
-              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors shadow-sm">
-                <span className="text-2xl">📦</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Peças Seriadas</h3>
-              <p className="text-slate-600">Produção de lotes de peças conforme desenho ou amostra, atendendo rigorosos padrões de qualidade.</p>
-            </div>
+          {/* Grid de Serviços */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <ServiceCard
+              title="Fabricação Sob Demanda"
+              description="Desenvolvimento e fabricação de peças únicas ou dispositivos complexos conforme desenho técnico ou amostra."
+              image="/assets/demanda_home1.png"
+              badge={{ text: "Personalizado", color: "#f97316" }} // Orange-500
+              tags={["Engenharia Reversa", "Projetos 3D", "Usinagem 5 Eixos"]}
+              delay={0}
+            />
+            <ServiceCard
+              title="Manutenção Industrial"
+              description="Recuperação de eixos, buchas e componentes mecânicos críticos para evitar paragens na sua linha de produção."
+              image="/assets/manutencao_home.jpg"
+              badge={{ text: "Urgência", color: "#3b82f6" }} // Blue-500
+              tags={["Recuperação de Peças", "Solda Especial", "Ajuste Técnico"]}
+              delay={100}
+            />
+            <ServiceCard
+              title="Peças Seriadas"
+              description="Produção de lotes de peças com repetibilidade garantida e controlo de qualidade rigoroso para montadoras."
+              image="/assets/seriado_home.jpg"
+              badge={{ text: "Escala", color: "#22c55e" }} // Green-500
+              tags={["Tornos CNC", "Controlo Dimensional", "Entrega Programada"]}
+              delay={200}
+            />
           </div>
 
-          <div className="text-center">
-            <Link href="/estrutura" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg">
-              Conheça Nossa Estrutura em Detalhes
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
+          {/* Seção Inferior: Materiais e Setores */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-slate-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 divider-x-0 md:divide-x divide-slate-100">
+
+              {/* Materiais Trabalhados */}
+              <div className="md:pr-12">
+                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-2">
+                  Materiais Trabalhados
+                </h4>
+                <ul className="grid grid-cols-2 gap-y-3 gap-x-4">
+                  {[
+                    "Aço Inox (304, 316)", "Aço Carbono",
+                    "Alumínio Aeronáutico", "Latão e Bronze",
+                    "Polímeros (Nylon, UHMW)", "Ligas Especiais"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-slate-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Principais Setores */}
+              <div className="md:pl-12">
+                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-2">
+                  Principais Setores
+                </h4>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { icon: "🚜", label: "Agrícola" },
+                    { icon: "🏭", label: "Mineração" },
+                    { icon: "⚡", label: "Energia" },
+                    { icon: "🧴", label: "Embalagens" },
+                    { icon: "🚗", label: "Automotivo" },
+                  ].map((setor, i) => (
+                    <span key={i} className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 rounded-lg border border-slate-200 font-medium hover:bg-slate-100 transition-colors text-sm">
+                      <span>{setor.icon}</span>
+                      {setor.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            <div className="text-center mt-12 pt-8 border-t border-slate-100">
+              <Link href="/estrutura" className="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-orange-500/20 transform hover:-translate-y-0.5">
+                Conheça Nossa Estrutura em Detalhes
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -51,6 +51,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'graph.microsoft.com',
       },
+      {
+        protocol: 'https',
+        hostname: '1drv.ms',
+      },
+      {
+        protocol: 'https',
+        hostname: 'onedrive.live.com',
+      },
       // Adicione este especificamente caso o wildcard falhe em algumas versões antigas
       {
         protocol: 'https',
