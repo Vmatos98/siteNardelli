@@ -49,7 +49,7 @@ export default function Empresa() {
           <span className="text-orange-400 font-bold tracking-widest uppercase text-sm mb-4 block">Desde 1991</span>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Nossa História e Valores</h1>
           <p className="text-xl text-slate-200 max-w-3xl mx-auto leading-relaxed">
-            Transformando empresas em parceiras através de soluções inovadoras e sustentáveis na indústria metalúrgica.
+            Transformando empresas em parceiras através de soluções inovadoras e sustentáveis na indústria metalmecânica.
           </p>
         </div>
       </section>
@@ -163,7 +163,7 @@ export default function Empresa() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+      {/* <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
         <div className="container mx-auto px-6 text-center md:text-left">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
@@ -180,7 +180,7 @@ export default function Empresa() {
             <p>&copy; 2024 Nardelli Usinagem. Todos os direitos reservados.</p>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   )
 }

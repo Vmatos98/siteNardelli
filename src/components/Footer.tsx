@@ -30,6 +30,11 @@ export function Footer() {
                 </div>
                 <div className="mt-12 pt-8 border-t border-slate-800 text-sm text-center">
                     <p>&copy; {new Date().getFullYear()} Nardelli Usinagem. Todos os direitos reservados.</p>
+                    <div className="mt-4">
+                        <Link href="/politica-de-privacidade" className="text-slate-500 hover:text-white transition-colors">
+                            Política de Privacidade
+                        </Link>
+                    </div>
                 </div>
             </div>
         </footer>
