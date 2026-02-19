@@ -29,16 +29,12 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group shrink-0">
           <Image
-            src="/logo.png"
+            src="/assets/logo v1.png"
             alt="Nardelli Usinagem"
-            width={56}
-            height={56}
-            className="h-10 md:h-12 lg:h-14 w-auto object-contain"
+            width={180}
+            height={60}
+            className="h-10 md:h-12 lg:h-16 w-auto object-contain"
           />
-          <div className="block">
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight leading-none">NARDELLI</h1>
-            <span className="text-xs text-orange-600 font-semibold tracking-widest uppercase">Usinagem</span>
-          </div>
         </Link>
 
         {/* Desktop Menu */}
