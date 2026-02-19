@@ -571,12 +571,12 @@ export default function Orcamento() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+      {/* <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
         <div className="container mx-auto px-6 text-center">
           <p>&copy; 2024 Nardelli Usinagem. Todos os direitos reservados.</p>
           <p className="text-sm mt-2">Dúvidas? Ligue para +55 (79) 3205-2272</p>
         </div>
-      </footer>
+      </footer> */}
     </div>
   )
 }
