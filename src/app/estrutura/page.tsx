@@ -46,8 +46,8 @@ const sections = [
   },
   {
     id: "tornearia",
-    title: "Tornearia Convencional",
-    subtitle: "Versatilidade para manutenção e peças de grande porte.",
+    title: "Torneamento Convencional",
+    subtitle: "Versatilidade para produção e manutenção de peças de baixa tiragem e diversos tamanhos.",
     items: [
       {
         title: "Torno Ø1000 x 4000mm",
@@ -252,7 +252,7 @@ export default function Estrutura() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer
       <footer className="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
         <div className="container mx-auto px-6 text-center md:text-left">
           <div className="flex flex-col md:flex-row justify-between items-center">
@@ -270,7 +270,7 @@ export default function Estrutura() {
             <p>&copy; 2024 Nardelli Usinagem. Todos os direitos reservados.</p>
           </div>
         </div>
-      </footer>
+      </footer> */}
 
       <style jsx>{`
         .services-hero {

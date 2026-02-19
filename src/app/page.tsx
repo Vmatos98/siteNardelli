@@ -54,7 +54,7 @@ function ClientesSection() {
   const clientesVisiveis = categoriaData.clientes.slice(0, 6)
 
   return (
-    <section id="clientes" className="py-24 bg-slate-50 relative overflow-hidden">
+    <section id="clientes" className="py-24 bg-white relative overflow-hidden">
       <div className="absolute top-0 right-0 w-1/3 h-full bg-white -skew-x-12 opacity-50 z-0"></div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -444,12 +444,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Clientes */}
-      <ClientesSection />
 
 
       {/* Serviços */}
-      <section id="servicos" className="py-24 bg-white">
+      <section id="servicos" className="py-24 bg-slate-50">
         <div className="container mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 inline-block section-title">Nossos Serviços</h2>
@@ -492,6 +490,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Clientes */}
+      <ClientesSection />
 
       {/* Contato e Localização */}
       <section id="contato" className="py-24 bg-slate-50">
