@@ -5,6 +5,67 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 
+// Componente de Card de Serviço
+interface ServiceCardProps {
+  title: string
+  description: string
+  image: string
+  badge: {
+    text: string
+    color: string
+  }
+  tags: string[]
+  delay?: number
+}
+
+function ServiceCard({ title, description, image, badge, tags, delay = 0 }: ServiceCardProps) {
+  return (
+    <div
+      className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group border border-slate-100 flex flex-col h-full"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {/* Imagem com Badge */}
+      <div className="relative h-64 overflow-hidden">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div
+          className="absolute bottom-4 left-4 text-xs font-bold px-3 py-1 rounded-full text-white uppercase tracking-wider shadow-sm"
+          style={{ backgroundColor: badge.color }}
+        >
+          {badge.text}
+        </div>
+      </div>
+
+      {/* Conteúdo */}
+      <div className="p-8 flex-grow flex flex-col">
+        <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-orange-600 transition-colors">
+          {title}
+        </h3>
+        <p className="text-slate-600 leading-relaxed mb-6 flex-grow">
+          {description}
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mt-auto">
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Componente de Clientes com Slides por Categoria
 function ClientesSection() {
   const [categoriaAtiva, setCategoriaAtiva] = useState('petroleo_gas')
@@ -294,76 +355,7 @@ function SocialBanner() {
 export default function Home() {
   return (
     <div className="bg-slate-50 text-slate-800">
-      {/* Header / Navbar */}
-      <header className="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-md transition-all duration-300">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <Image
-              src="/logo.png"
-              alt="Nardelli Usinagem"
-              width={56}
-              height={56}
-              className="h-12 md:h-14 w-auto object-contain"
-            />
-            <div className="hidden sm:block">
-              <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight leading-none">NARDELLI</h1>
-              <span className="text-xs text-orange-600 font-semibold tracking-widest uppercase">Usinagem</span>
-            </div>
-          </Link>
-
-          {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
-            <a href="#home" className="hover:text-orange-600 transition-colors">Home</a>
-            <Link href="/empresa" className="hover:text-orange-600 transition-colors">Empresa</Link>
-            <Link href="/estrutura" className="hover:text-orange-600 transition-colors">Estrutura</Link>
-            <a href="#contato" className="hover:text-orange-600 transition-colors">Contato</a>
-
-            <div className="flex items-center gap-4">
-              <Link href="/orcamento" className="px-5 py-2.5 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors">
-                Orçamento
-              </Link>
-              <div className="flex items-center gap-3 border-l pl-4 border-slate-200 h-8">
-                <a href="#" className="text-pink-600 hover:text-pink-700 transition-colors" title="Instagram">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
-                </a>
-                <a href="#" className="text-red-600 hover:text-red-700 transition-colors" title="YouTube">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-slate-800"
-            onClick={() => {
-              const menu = document.getElementById('mobile-menu')
-              if (menu) menu.classList.toggle('hidden')
-            }}
-          >
-            <span className="text-2xl">☰</span>
-          </button>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        <div id="mobile-menu" className="hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm md:hidden flex-col shadow-xl rounded-b-lg mx-2 mt-2 overflow-hidden">
-          <div className="py-2">
-            <a href="#home" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Home</a>
-            <Link href="/empresa" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Empresa</Link>
-            <Link href="/estrutura" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Estrutura</Link>
-            <a href="#contato" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Contato</a>
-            <div className="mx-4 my-2 h-px bg-slate-200"></div>
-            <Link href="/orcamento" className="block mx-4 my-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg text-center hover:from-orange-600 hover:to-orange-700 transition-all shadow-md">
-              Solicitar Orçamento
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Header removido pois já existe no layout global */}
 
       {/* Hero Section */}
       <section id="home" className="hero-bg min-h-screen flex flex-col relative pb-32">
@@ -447,46 +439,105 @@ export default function Home() {
 
 
       {/* Serviços */}
-      <section id="servicos" className="py-24 bg-slate-50">
+      {/* Serviços */}
+      <section id="servicos" className="py-24 bg-slate-50 relative">
         <div className="container mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 inline-block section-title">Nossos Serviços</h2>
-            <p className="text-slate-600 mt-4">Utilizamos equipamentos modernos para garantir a máxima precisão em cada peça produzida.</p>
+
+          {/* Cabeçalho da Seção */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-orange-600 font-bold tracking-widest uppercase text-sm mb-2 block">
+              Expertise Industrial
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 section-title inline-block">
+              Soluções em Usinagem
+            </h2>
+            <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto">
+              Do protótipo à produção em escala, oferecemos precisão milesimal e acabamento técnico superior.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
-              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors shadow-sm">
-                <span className="text-2xl">⚙️</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Fabricação Sob Demanda</h3>
-              <p className="text-slate-600">Desenvolvimento e fabricação de peças personalizadas conforme suas especificações e necessidades.</p>
-            </div>
-
-            <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
-              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors shadow-sm">
-                <span className="text-2xl">🔧</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Manutenção Industrial</h3>
-              <p className="text-slate-600">Recuperação de peças e componentes mecânicos para manter sua linha de produção sempre ativa.</p>
-            </div>
-
-            <div className="bg-slate-50 p-8 rounded-xl shadow-sm hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 group">
-              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors shadow-sm">
-                <span className="text-2xl">📦</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">Peças Seriadas</h3>
-              <p className="text-slate-600">Produção de lotes de peças conforme desenho ou amostra, atendendo rigorosos padrões de qualidade.</p>
-            </div>
+          {/* Grid de Serviços */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <ServiceCard
+              title="Fabricação Sob Demanda"
+              description="Desenvolvimento e fabricação de peças únicas ou dispositivos complexos conforme desenho técnico ou amostra."
+              image="/assets/demanda_home1.png"
+              badge={{ text: "Personalizado", color: "#f97316" }} // Orange-500
+              tags={["Engenharia Reversa", "Projetos 3D", "Usinagem 5 Eixos"]}
+              delay={0}
+            />
+            <ServiceCard
+              title="Manutenção Industrial"
+              description="Recuperação de eixos, buchas e componentes mecânicos críticos para evitar paragens na sua linha de produção."
+              image="/assets/manutencao_home.jpg"
+              badge={{ text: "Urgência", color: "#3b82f6" }} // Blue-500
+              tags={["Recuperação de Peças", "Solda Especial", "Ajuste Técnico"]}
+              delay={100}
+            />
+            <ServiceCard
+              title="Peças Seriadas"
+              description="Produção de lotes de peças com repetibilidade garantida e controlo de qualidade rigoroso para montadoras."
+              image="/assets/seriado_home.jpg"
+              badge={{ text: "Escala", color: "#22c55e" }} // Green-500
+              tags={["Tornos CNC", "Controlo Dimensional", "Entrega Programada"]}
+              delay={200}
+            />
           </div>
 
-          <div className="text-center">
-            <Link href="/estrutura" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg">
-              Conheça Nossa Estrutura em Detalhes
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
+          {/* Seção Inferior: Materiais e Setores */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-slate-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 divider-x-0 md:divide-x divide-slate-100">
+
+              {/* Materiais Trabalhados */}
+              <div className="md:pr-12">
+                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-2">
+                  Materiais Trabalhados
+                </h4>
+                <ul className="grid grid-cols-2 gap-y-3 gap-x-4">
+                  {[
+                    "Aço Inox (304, 316)", "Aço Carbono",
+                    "Alumínio Aeronáutico", "Latão e Bronze",
+                    "Polímeros (Nylon, UHMW)", "Ligas Especiais"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-slate-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Principais Setores */}
+              <div className="md:pl-12">
+                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-2">
+                  Principais Setores
+                </h4>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { icon: "🚜", label: "Agrícola" },
+                    { icon: "🏭", label: "Mineração" },
+                    { icon: "⚡", label: "Energia" },
+                    { icon: "🧴", label: "Embalagens" },
+                    { icon: "🚗", label: "Automotivo" },
+                  ].map((setor, i) => (
+                    <span key={i} className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 rounded-lg border border-slate-200 font-medium hover:bg-slate-100 transition-colors text-sm">
+                      <span>{setor.icon}</span>
+                      {setor.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            <div className="text-center mt-12 pt-8 border-t border-slate-100">
+              <Link href="/estrutura" className="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-orange-500/20 transform hover:-translate-y-0.5">
+                Conheça Nossa Estrutura em Detalhes
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
