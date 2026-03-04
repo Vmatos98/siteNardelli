@@ -98,10 +98,12 @@ export default function Empresa() {
 
       {/* Missão, Visão e Valores */}
       <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-7xl mx-auto mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Filosofia Corporativa</h2>
-            <p className="text-slate-600">Nossa política é levar serviços a empresas transformando-as em parceiras, com o objetivo de diminuir custos e aumentar produtividade.</p>
+            <p className="text-slate-600 text-lg leading-relaxed">
+              A nossa atuação vai muito além da simples fabricação de peças. Posicionamo-nos como um parceiro estratégico de engenharia, focado em compreender os desafios específicos de cada operação. Entregamos soluções técnicas avançadas que <strong className="text-slate-800">reduzem riscos de paragens inesperadas</strong>, aumentam exponencialmente a vida útil dos componentes e garantem a máxima <strong className="text-slate-800">previsibilidade operacional</strong> para a sua indústria. Trabalhamos para que a sua empresa produza mais, com maior segurança e menor custo de manutenção a longo prazo.
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Missão */}
@@ -113,7 +115,7 @@ export default function Empresa() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-4">Missão</h3>
-              <p className="text-slate-600 leading-relaxed">Fornecer soluções em usinagem e metalurgia de forma sustentável, gerando valor real para os clientes e a sociedade.</p>
+              <p className="text-slate-600 leading-relaxed">Desenvolver e fornecer soluções industriais voltadas à alta precisão, confiabilidade e desempenho, apoiando empresas que não abrem mão de qualidade, padronização e produtividade em seus processos.</p>
             </div>
             {/* Visão */}
             <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all hover:-translate-y-1">
@@ -125,7 +127,7 @@ export default function Empresa() {
                 </svg>
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-4">Visão</h3>
-              <p className="text-slate-600 leading-relaxed">Ser líder no segmento de usinagem e metalurgia no Estado de Sergipe, expandindo continuamente nossa capacidade de atendimento.</p>
+              <p className="text-slate-600 leading-relaxed">Ser uma referência técnica em usinagem e metalmecânica, reconhecida por não competir apenas por preço, mas por contribuir tecnicamente para a eficiência e o resultado final de cada cliente.</p>
             </div>
             {/* Valores */}
             <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all hover:-translate-y-1">
@@ -137,10 +139,11 @@ export default function Empresa() {
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-4">Valores</h3>
               <ul className="text-slate-600 space-y-2 text-sm">
-                <li className="flex items-center gap-2">✓ Confiabilidade e Transparência</li>
+                <li className="flex items-center gap-2">✓ Previsibilidade Operacional</li>
                 <li className="flex items-center gap-2">✓ Valorização Humana</li>
-                <li className="flex items-center gap-2">✓ Qualidade com Excelência</li>
-                <li className="flex items-center gap-2">✓ Sustentabilidade e Segurança</li>
+                <li className="flex items-center gap-2">✓ Rigor e Precisão Técnica</li>
+                <li className="flex items-center gap-2">✓ Confiabilidade e Transparência</li>
+                <li className="flex items-center gap-2">✓ Atendimento Criterioso e Personalizado</li>
               </ul>
             </div>
           </div>
@@ -148,7 +151,7 @@ export default function Empresa() {
       </section>
 
       {/* Setores de Atuação */}
-      <section className="py-20 bg-slate-900 text-white">
+      {/* <section className="py-20 bg-slate-900 text-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-2xl font-bold mb-12">Setores de Atuação</h2>
           <div className="flex flex-wrap justify-center gap-4 md:gap-8">
@@ -160,7 +163,7 @@ export default function Empresa() {
             <span className="px-6 py-3 border border-slate-700 rounded-full hover:bg-orange-600 hover:border-orange-600 transition-all cursor-default">Máquinas Pesadas</span>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       {/* <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">

@@ -419,7 +419,7 @@ export default function Home() {
                   ✅ Qualidade Garantida
                 </li>
                 <li className="flex items-center gap-3 text-slate-700 font-medium">
-                  ✅ Entrega Pontual
+                  ✅ Atendimento Personalizado
                 </li>
                 <li className="flex items-center gap-3 text-slate-700 font-medium">
                   ✅ Equipe Especializada
