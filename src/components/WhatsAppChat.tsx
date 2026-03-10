@@ -212,7 +212,7 @@ export default function WhatsAppChat() {
             </svg>
           </a>
           <a 
-            href="https://instagram.com" 
+            href="https://www.instagram.com/nardelliusinagem?igsh=MWFia2dqemxpN2NxNA==" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="bg-white p-3 rounded-full shadow-lg text-pink-600 hover:scale-110 transition-transform border border-slate-100" 
