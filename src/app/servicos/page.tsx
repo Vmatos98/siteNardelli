@@ -22,13 +22,15 @@ export const dynamic = 'force-dynamic'
 export default async function Page() {
     // 1. Busca apenas a lista de pastas (Muito Rápido)
     const albums = await getAlbums()
+    // Filtro para não exibir a pasta Estrutura na tela de Serviços
+    const filteredAlbums = albums.filter(album => album.title.toLowerCase() !== 'estrutura')
     const servicesData: Record<string, ServiceData> = {}
 
-    console.log(`[OneDrive] Listando ${albums.length} pastas (Modo Zero-Blocking)...`)
+    console.log(`[OneDrive] Listando ${filteredAlbums.length} pastas (Modo Zero-Blocking)...`)
 
     // 2. Busca apenas os textos (!info.txt) em paralelo
     // Não buscamos fotos aqui para a página abrir instantaneamente.
-    const albumsWithMeta = await Promise.all(albums.map(async (album) => {
+    const albumsWithMeta = await Promise.all(filteredAlbums.map(async (album) => {
         const txtMetadata = await getFolderMetadata(album.id);
         return { album, txtMetadata };
     }));

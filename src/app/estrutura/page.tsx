@@ -1,9 +1,8 @@
-'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
 import { StructureSection } from '@/components/StructureSection'
 import { PhysicalStructureSection } from '@/components/PhysicalStructureSection'
+import { getAllOneDrivePhotos } from './actions'
 
 // DADOS DA ESTRUTURA FÍSICA
 const estruturaFisicaData = {
@@ -21,7 +20,7 @@ const sections = [
       {
         title: "Eletroerosão por Penetração",
         description: "Usinagem de cavidades complexas e materiais endurecidos com alta fidelidade.",
-        image: "/assets/e011.jpg", // ou .png
+        image: "/assets/e011.jpg",
         capacidade: "Cursos de Eixos (X, Y, Z): 300x200x200mm",
         fabricante: "INFRESA ONA (GORKA 200)",
         observacoes: "Peso sobre a mesa 300kg"
@@ -95,11 +94,32 @@ const sections = [
         observacoes: "Usinagem de flanges até Ø850mm, Peso admissível 2000kg"
       },
       {
-        title: "Torno Ø650 x 2200mm",
+        title: "Torno Ø650 x 2200mm (NARDINI)",
+        description: "O padrão da indústria para manutenção geral e peças de médio porte.",
+        image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+        fabricante: "NARDINI (NDT 650)",
+        observacoes: "Usinagem de flanges até Ø800mm, Peso admissível 1000kg"
+      },
+      {
+        title: "Torno Ø650 x 2200mm (ROMI)",
         description: "Máquina robusta projetada para ferramentaria, manutenção médio porte e produção.",
         image: "/assets/e020.jpg",
         fabricante: "ROMI (I40-A)",
         observacoes: "Peso admissível 1500kg"
+      },
+      {
+        title: "Torno Ø440 x 1000mm",
+        description: "Alta precisão, robustez e versatilidade com peças de industria e ferramentarias até 1000mm.",
+        image: "/assets/e021.jpg",
+        fabricante: "NARDINI (MASCOTE GOLD MS 220)",
+        observacoes: "Peso admissível 600kg"
+      },
+      {
+        title: "Torno Ø400 x 1000mm",
+        description: "Agilidade e precisão para componentes pequenos.",
+        image: "/assets/e022.jpg",
+        fabricante: "IMOR (PRN 320)",
+        observacoes: "Peso admissível 80kg"
       }
     ]
   },
@@ -168,7 +188,7 @@ const sections = [
       {
         title: "Forno elétrico vertical mufla 700 x 700 x 900mm",
         description: "Projetada tratar termicamente peças industriais e fundição de peças em alumínio.",
-        image: "https://images.unsplash.com/photo-1503693240228-a400c804f86d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80", // Coloque o nome do arquivo quando tiver
+        image: "https://images.unsplash.com/photo-1503693240228-a400c804f86d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
         capacidade: "1200ºC Ø400 x 500mm",
         fabricante: "JB",
         observacoes: "Máxima 1200°C 100kg"
@@ -207,12 +227,57 @@ const sections = [
         image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
         capacidade: "Diâmetro máximo a 90° Ø330mm",
         fabricante: "RONEMAK (M-330L)"
+      },
+      {
+        title: "Corte a quente com plasma e maçarico",
+        description: "O corte a plasma não se limita ao aço-carbono, corta qualquer metal que conduza eletricidade de forma rápida, precisa com bom acabamento e pouco aquecimento das peças.",
+        image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+        capacidade: "Corte espessura de até 3/4\" para aço carbono e 5/8\" em inox"
+      },
+      {
+        title: "Prensagem e conformação",
+        description: "Prensa Hidráulica para desmontagem ou montagens de componentes industriais de grande porte, estampagem, dobragem ou repuxo de chapas.",
+        image: "https://images.unsplash.com/photo-1588619461332-45f8dd955e4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+        capacidade: "1200 x 2000 x 180t",
+        fabricante: "NARDELLI",
+        observacoes: "Pressão máxima de 180t"
+      },
+      {
+        title: "Soldagem MIG/MAG 440A, TIG Portátil 150A e Eletrodo revestido 425A",
+        description: "MIG/MAG possui alta produtividade e versatilidade, sendo um processo semiautomático que permite soldagens contínuas sem a necessidade de trocas de eletrodo.",
+        image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+        capacidade: "Máquina Inversora de Solda 420A",
+        fabricante: "ESAB (EM 455i)"
       }
     ]
   }
 ]
 
-export default function Estrutura() {
+export default async function Estrutura() {
+
+  // 1. Busca todas as fotos do OneDrive no lado do servidor
+  const allPhotos = await getAllOneDrivePhotos()
+
+  // 2. Cria um mapa rápido das fotos (ex: { "e011": "https://onedrive...", "e012": "..." })
+  const photoMap = allPhotos.reduce((acc, photo) => {
+    acc[photo.nameWithoutExt] = photo.src
+    return acc
+  }, {} as Record<string, string>)
+
+  // 3. Substitui dinamicamente as imagens locais pelas URLs do OneDrive se existirem
+  const dynamicSections = sections.map(section => ({
+    ...section,
+    items: section.items.map(item => {
+      const imageName = item.image.split('/').pop()?.split('.')[0]?.toLowerCase()
+
+      return {
+        ...item,
+        // Se a imagem bater com o nome da planilha, usa a URL do OneDrive, senão mantém original
+        image: (imageName && photoMap[imageName]) ? photoMap[imageName] : item.image
+      }
+    })
+  }))
+
   return (
     <div className="bg-slate-50 text-slate-800">
       {/* Header */}
@@ -244,10 +309,11 @@ export default function Estrutura() {
 
           <button
             className="md:hidden text-slate-800"
-            onClick={() => {
-              const menu = document.getElementById('mobile-menu')
-              if (menu) menu.classList.toggle('hidden')
-            }}
+          // IDEAL: Mover todo este Header para um componente cliente <Header />
+          // onClick={() => {
+          //  const menu = document.getElementById('mobile-menu')
+          //  if (menu) menu.classList.toggle('hidden')
+          // }}
           >
             <span className="text-2xl">☰</span>
           </button>
@@ -281,7 +347,7 @@ export default function Estrutura() {
       {/* Conteúdo Principal */}
       <div className="container mx-auto px-6 py-16 space-y-16">
 
-        {/* Renderiza a nova Estrutura Física como DESTAQUE */}
+        {/* Renderiza a Estrutura Física como DESTAQUE */}
         <PhysicalStructureSection {...estruturaFisicaData} />
 
         {/* Divisor Visual */}
@@ -290,9 +356,9 @@ export default function Estrutura() {
           <p className="text-slate-600 max-w-2xl mx-auto">Conheça os equipamentos que compõem nosso setor produtivo, divididos por categoria de operação.</p>
         </div>
 
-        {/* Renderiza as Máquinas e Categorias */}
+        {/* Renderiza as Máquinas e Categorias passando o array dinâmico */}
         <div className="space-y-24">
-          {sections.map((section, index) => (
+          {dynamicSections.map((section, index) => (
             <StructureSection
               key={section.id}
               {...section}
@@ -318,7 +384,8 @@ export default function Estrutura() {
         </div>
       </section>
 
-      <style jsx>{`
+      {/* Retornei o style para um global.css ou mantive aqui como fragment se preferir */}
+      <style>{`
         .services-hero {
           background-image: linear-gradient(rgba(15, 23, 42, 0.9), rgba(234, 88, 12, 0.2)), url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
           background-size: cover;

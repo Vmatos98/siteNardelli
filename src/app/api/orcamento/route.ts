@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import nodemailer from 'nodemailer';
+import path from 'path';
 
 // --- CONFIGURAÇÕES E HELPERS ---
 
@@ -32,27 +33,44 @@ async function enviarConfirmacaoCliente(dados: any) {
     });
 
     const mailOptions = {
-      from: `"Nardelli Usinagem" <${process.env.EMAIL_USER}>`,
+      from: `"Nardelli Usinagem" <${process.env.EMAIL_ALIAS}>`,
       to: dados.email, // Envia DIRETAMENTE para o cliente
       // Opcional: Se você quiser receber uma cópia oculta para saber que chegou:
       // bcc: process.env.EMAIL_USER, 
       subject: `Recebemos sua solicitação de orçamento: ${dados.itemType}`,
       text: `Olá ${dados.nome},\n\nRecebemos sua solicitação e entraremos em contato em breve.\n\nAtenciosamente,\nEquipe Nardelli Usinagem`, // Versão texto puro
       html: `
-        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
-          <h2 style="color: #ea580c;">Solicitação Recebida</h2>
+        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; padding: 20px; background-color: #f3f4f6; border-radius: 8px;">
           
-          <p>Olá <strong>${dados.nome}</strong>,</p>
-          
-          <p>Recebemos sua solicitação de orçamento para <strong>${dados.itemType}</strong> e entraremos em contato em breve.</p>
-          
-          <p>Seus dados e arquivos já foram encaminhados para nossa equipe técnica para análise.</p>
-          
-          <br>
-          <p>Atenciosamente,<br>
-          <strong>Equipe Nardelli Usinagem</strong></p>
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="cid:logonardelli" alt="Nardelli Usinagem" style="max-width: 180px; height: auto;" />
+          </div>
+
+          <div style="background-color: #ffffff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h2 style="color: #ea580c; margin-top: 0;">Solicitação Recebida</h2>
+            
+            <p>Olá <strong>${dados.nome}</strong>,</p>
+            
+            <p>Recebemos sua solicitação de orçamento para <strong>${dados.itemType}</strong> e entraremos em contato em breve.</p>
+            
+            <p>Seus dados e arquivos já foram encaminhados para nossa equipe técnica para análise.</p>
+            
+            <br>
+            <p style="margin-bottom: 0;">Atenciosamente,<br>
+            <strong>Equipe Nardelli Usinagem</strong></p>
+          </div>
+
         </div>
       `,
+      // Aqui nós anexamos a imagem e damos um ID a ela
+      attachments: [
+        {
+          filename: 'logo v1.png',
+          // O Next.js usa o process.cwd() para achar a raiz do projeto e entrar na pasta public
+          path: path.join(process.cwd(), 'public', 'assets', 'logo v1.png'),
+          cid: 'logonardelli' // Tem que ser EXATAMENTE igual ao src="cid:logonardelli" do HTML
+        }
+      ]
     };
 
     await transporter.sendMail(mailOptions);

@@ -61,7 +61,7 @@ export function PhysicalStructureSection({ title, subtitle }: PhysicalStructureP
     }, [selectedImageIndex, handleNextImage, handlePrevImage])
 
     return (
-        <section className="w-full bg-slate-900 py-20 text-white mt-12 rounded-3xl overflow-hidden shadow-2xl relative">
+        <section className="w-full bg-slate-900 py-12 md:py-16 text-white mt-12 rounded-3xl overflow-hidden shadow-2xl relative">
             {/* Background Decorativo */}
             <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-orange-600/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl"></div>
@@ -103,7 +103,7 @@ export function PhysicalStructureSection({ title, subtitle }: PhysicalStructureP
             )}
 
             <div className="container mx-auto px-6 relative z-10">
-                <div className="text-center max-w-3xl mx-auto mb-16">
+                <div className="text-center max-w-3xl mx-auto mb-10">
                     <span className="text-orange-500 font-bold tracking-widest uppercase text-sm mb-4 block">
                         Infraestrutura
                     </span>
@@ -120,7 +120,7 @@ export function PhysicalStructureSection({ title, subtitle }: PhysicalStructureP
                         <p className="text-slate-500 font-medium">Carregando galeria da estrutura...</p>
                     </div>
                 ) : photos.length > 0 ? (
-                    <div className="animate-fade-in max-w-5xl mx-auto">
+                    <div className="animate-fade-in w-full max-w-6xl mx-auto">
                         {/* Imagem Principal */}
                         <div
                             className="relative w-full aspect-video md:aspect-[21/9] bg-slate-800 rounded-2xl overflow-hidden shadow-2xl mb-6 cursor-pointer group"
