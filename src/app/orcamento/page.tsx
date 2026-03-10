@@ -163,6 +163,14 @@ export default function Orcamento() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<CategoryConfig | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error', visible: boolean }>({ message: '', type: 'success', visible: false })
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type, visible: true })
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, visible: false }))
+    }, 5000)
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -225,7 +233,7 @@ export default function Orcamento() {
     // Validar telefone
     const phoneDigits = formData.telefone.replace(/\D/g, '')
     if (phoneDigits.length < 10 || phoneDigits.length > 11) {
-      alert('Por favor, digite um telefone válido com DDD (10 ou 11 dígitos)')
+      showToast('Por favor, digite um telefone válido com DDD', 'error')
       return
     }
 
@@ -250,7 +258,7 @@ export default function Orcamento() {
       })
 
       if (response.ok) {
-        alert('Orçamento enviado com sucesso! Nossa equipe entrará em contato.')
+        showToast('Orçamento enviado! Nossa equipe entrará em contato.', 'success')
         setFormData({
           nome: '',
           empresa: '',
@@ -266,7 +274,7 @@ export default function Orcamento() {
         throw new Error('Erro ao enviar orçamento')
       }
     } catch (error) {
-      alert('Erro ao enviar orçamento. Tente novamente.')
+      showToast('Erro ao enviar orçamento. Tente novamente.', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -329,6 +337,19 @@ export default function Orcamento() {
 
   return (
     <div className="bg-slate-50 text-slate-800">
+      {/* Toast Notification */}
+      <div className={`fixed top-24 md:top-6 left-1/2 -translate-x-1/2 z-[100] px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 transform flex items-center gap-3 w-[90%] md:w-auto max-w-md ${toast.visible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'} ${toast.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-500 text-white'}`}>
+        {toast.type === 'success' ? (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        )}
+        <span className="font-medium flex-1">{toast.message}</span>
+        <button onClick={() => setToast(prev => ({ ...prev, visible: false }))} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
       {/* Header */}
       <header className="fixed w-full z-50 bg-white/95 backdrop-blur-sm shadow-md transition-all duration-300">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -472,6 +493,7 @@ export default function Orcamento() {
                 <div className="mb-8">
                   <label className="block text-sm font-bold text-slate-800 mb-3">O que você precisa usinar?</label>
                   <select
+                    required
                     value={formData.itemType}
                     onChange={handleCategoryChange}
                     className="w-full px-4 py-4 text-lg rounded-lg border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 outline-none transition-all bg-white cursor-pointer"

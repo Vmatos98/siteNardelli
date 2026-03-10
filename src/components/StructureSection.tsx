@@ -8,6 +8,9 @@ interface Item {
     title: string
     description: string
     image: string
+    capacidade?: string
+    fabricante?: string
+    observacoes?: string
 }
 
 interface StructureSectionProps {
@@ -36,10 +39,10 @@ export function StructureSection({ id, title, subtitle, items, reversed = false 
 
                     <div className="space-y-3">
                         {items.map((item, index) => (
-                            <button
+                            <div
                                 key={index}
                                 onClick={() => setActiveIndex(index)}
-                                className={`w-full text-left p-5 rounded-lg transition-all duration-300 border border-transparent group ${activeIndex === index
+                                className={`w-full text-left p-5 rounded-lg cursor-pointer transition-all duration-300 border group ${activeIndex === index
                                         ? 'bg-orange-50 border-orange-200 shadow-sm ring-1 ring-orange-200'
                                         : 'bg-white hover:bg-slate-50 border-slate-100 shadow-sm'
                                     }`}
@@ -55,7 +58,40 @@ export function StructureSection({ id, title, subtitle, items, reversed = false 
                                 <p className={`text-sm ${activeIndex === index ? 'text-slate-700' : 'text-slate-600'}`}>
                                     {item.description}
                                 </p>
-                            </button>
+
+                                {/* Área expansível para detalhes extras da máquina */}
+                                <AnimatePresence>
+                                    {activeIndex === index && (item.capacidade || item.fabricante || item.observacoes) && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                                            animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                                            exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                                            className="overflow-hidden border-t border-orange-200/60 pt-3"
+                                        >
+                                            <div className="grid gap-3">
+                                                {item.capacidade && (
+                                                    <div>
+                                                        <span className="text-[10px] font-bold text-orange-800/70 uppercase tracking-widest block mb-0.5">Capacidade Técnica</span>
+                                                        <span className="text-sm text-slate-700">{item.capacidade}</span>
+                                                    </div>
+                                                )}
+                                                {item.fabricante && (
+                                                    <div>
+                                                        <span className="text-[10px] font-bold text-orange-800/70 uppercase tracking-widest block mb-0.5">Fabricante/Modelo</span>
+                                                        <span className="text-sm text-slate-700">{item.fabricante}</span>
+                                                    </div>
+                                                )}
+                                                {item.observacoes && (
+                                                    <div>
+                                                        <span className="text-[10px] font-bold text-orange-800/70 uppercase tracking-widest block mb-0.5">Observações</span>
+                                                        <span className="text-sm text-slate-700">{item.observacoes}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -78,6 +114,7 @@ export function StructureSection({ id, title, subtitle, items, reversed = false 
                                     fill
                                     className="object-cover"
                                     priority
+                                    unoptimized={items[activeIndex].image.startsWith('http')}
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
                                     <p className="text-white font-medium text-lg border-l-4 border-orange-500 pl-3">
