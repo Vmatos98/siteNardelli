@@ -2,9 +2,48 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
 
 export default function Empresa() {
+
+  // DADOS DA LINHA DO TEMPO
+  const timeline = [
+    {
+      year: "1991",
+      title: "Fundação",
+      desc: "Início das atividades em Aracaju-SE, com foco em manutenção preventiva e corretiva para a indústria têxtil, pelas mãos de Uberto e Isabel Nardelli."
+    },
+    {
+      year: "2004",
+      title: "Expansão Tecnológica",
+      desc: "Investimento massivo em novas tecnologias e capacitação técnica. Ampliação da estrutura física para atender a demanda crescente."
+    },
+    {
+      year: "2010",
+      title: "Resiliência e Sucessão",
+      desc: "Com o falecimento da guerreira e fundadora Isabel Nardelli, a nova geração assume a liderança, mantendo vivo o legado e os valores da família."
+    },
+    {
+      year: "2013",
+      title: "Salto Tecnológico e Precisão",
+      desc: "Aquisição do primeiro equipamento CNC, marcando a transição definitiva para a usinagem de alta precisão e produção seriada."
+    },
+    {
+      year: "2017",
+      title: "Cultura de Excelência (5S)",
+      desc: "Implementação rigorosa do programa 5S. Uma verdadeira revolução na organização, limpeza e padronização da nossa indústria."
+    },
+    {
+      year: "2024",
+      title: "Nova Sede e Novos Caminhos",
+      desc: "Terceira grande mudança para um parque fabril ainda maior e moderno. Neste mesmo ano, o sócio Júlio se despede amigavelmente para abraçar uma oportunidade irrecusável em outro estado, mantendo intactos o respeito e a parceria."
+    },
+    {
+      year: "Hoje",
+      title: "Nova Era e Consolidação",
+      desc: "Sob a gestão de Fabiano Nardelli e Bruna Mayara, a empresa segue em constante evolução, atuando com excelência nos setores Petroquímico, Mineração, Plástico e muitos outros."
+    }
+  ];
+
   return (
     <div className="bg-slate-50 text-slate-800">
       {/* Header */}
@@ -21,6 +60,7 @@ export default function Empresa() {
             <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
             <span className="text-orange-600 font-bold">Empresa</span>
             <Link href="/servicos" className="hover:text-orange-600 transition-colors">Serviços</Link>
+            <Link href="/estrutura" className="hover:text-orange-600 transition-colors">Estrutura</Link>
             <Link href="/#contato" className="hover:text-orange-600 transition-colors">Contato</Link>
             <Link href="/orcamento" className="px-5 py-2.5 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors">Orçamento</Link>
           </nav>
@@ -36,6 +76,7 @@ export default function Empresa() {
             <Link href="/" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Home</Link>
             <span className="block px-6 py-3 text-orange-600 font-semibold bg-orange-50">Empresa</span>
             <Link href="/servicos" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Serviços</Link>
+            <Link href="/estrutura" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Estrutura</Link>
             <Link href="/#contato" className="block px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">Contato</Link>
             <div className="mx-4 my-2 h-px bg-slate-200"></div>
             <Link href="/orcamento" className="block mx-4 my-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg text-center hover:from-orange-600 hover:to-orange-700 transition-all shadow-md">Solicitar Orçamento</Link>
@@ -44,146 +85,238 @@ export default function Empresa() {
       </header>
 
       {/* Hero Section */}
-      <section className="hero-bg pt-40 pb-24 text-white relative min-h-[60vh] flex items-center">
+      <section className="bg-slate-900 pt-40 pb-24 text-white relative min-h-[50vh] flex items-center">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center opacity-20"></div>
         <div className="container mx-auto px-6 relative z-10 text-center">
-          <span className="text-orange-400 font-bold tracking-widest uppercase text-sm mb-4 block">Desde 1991</span>
+          <span className="text-orange-500 font-bold tracking-widest uppercase text-sm mb-4 block">Tradição desde 1991</span>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Nossa História e Valores</h1>
-          <p className="text-xl text-slate-200 max-w-3xl mx-auto leading-relaxed">
-            Transformando empresas em parceiras através de soluções inovadoras e sustentáveis na indústria metalmecânica.
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            Mais de 30 anos transformando suor em peças de precisão. Uma jornada de família construída com transparência, honestidade e fé.
           </p>
         </div>
       </section>
 
-      {/* Nossa História */}
+      {/* Nossa História - Linha do Tempo (Fundo Branco) */}
       <section className="py-20 bg-white overflow-hidden">
         <div className="container mx-auto px-6">
           <h2 className="text-3xl font-bold text-slate-900 text-center mb-16">Trajetória de Sucesso</h2>
-          <div className="max-w-4xl mx-auto relative">
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-200 transform -translate-x-1/2"></div>
-            <div className="space-y-12 relative z-10">
-              {/* 1991 */}
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="md:w-1/2 md:text-right">
-                  <h3 className="text-2xl font-bold text-orange-600">1991</h3>
-                  <h4 className="text-lg font-bold text-slate-800 mb-2">Fundação</h4>
-                  <p className="text-slate-600">Início das atividades em Aracaju-SE, com foco em manutenção preventiva e corretiva para a <strong>indústria têxtil</strong>.</p>
+
+          <div className="max-w-5xl mx-auto relative">
+            {/* Linha Central */}
+            <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-0.5 bg-slate-200 md:-translate-x-1/2"></div>
+
+            <div className="space-y-16 relative z-10">
+              {[
+                {
+                  year: "1991",
+                  title: "Fundação",
+                  desc: "Início das atividades em Aracaju-SE, com foco em manutenção preventiva e corretiva para a indústria têxtil, pelas mãos de Uberto e Isabel Nardelli.",
+                  image: "/assets/empresa/1991.png" // Troque pela foto antiga do Seu Uberto
+                },
+                {
+                  year: "2004",
+                  title: "Expansão Tecnológica",
+                  desc: "Investimento massivo em novas tecnologias e capacitação técnica. Ampliação da estrutura física para atender a demanda crescente.",
+                  image: "/assets/empresa/2004.png" // Troque pela foto da primeira mudança
+                },
+                {
+                  year: "2008",
+                  title: "Segunda Mudança",
+                  desc: "Novo salto de crescimento! A empresa realiza a Mudança 02 para uma estrutura ainda mais preparada para serviços de usinagem com tecnologia e versatilidade.",
+                  image: "/assets/empresa/2008.png"
+                },
+                {
+                  year: "2010",
+                  title: "Resiliência e Sucessão",
+                  desc: "Com o falecimento da guerreira e fundadora Isabel Nardelli, a nova geração assume a liderança, mantendo vivo o legado e os valores inegociáveis da família.",
+                  // Utilizamos um array 'images' para colocar as duas fotos lado a lado
+                  images: [
+                    "/assets/empresa/2010-1.png", // Substitua pela foto da Dona Isabel
+                    "/assets/empresa/2010-2.png"  // Substitua pela foto dos sucessores
+                  ]
+                },
+                {
+                  year: "2013",
+                  title: "Salto Tecnológico e Precisão",
+                  desc: "Aquisição do primeiro equipamento CNC, marcando a transição definitiva da usinagem convencional para a alta precisão e produção seriada.",
+                  image: "/assets/empresa/2013.png"
+                },
+                {
+                  year: "2017",
+                  title: "Cultura de Excelência (5S)",
+                  desc: "Adoção da metodologia japonesa 5S, transformando nosso ambiente de trabalho. Essa revolução na organização, limpeza e padronização reduziu os tempos de setup, aumentou a segurança da equipe e elevou a precisão e eficiência das nossas entregas.",
+                  image: "/assets/empresa/2017.png"
+                },
+                {
+                  year: "2024",
+                  title: "Terceira Mudança e Novos Caminhos",
+                  desc: "Pela terceira vez, a empresa expande seu espaço físico, deixando o local anterior para se instalar em um parque fabril novo e ainda maior. No mesmo ano, o sócio Júlio se despede amigavelmente para abraçar uma oportunidade em outro estado, com respeito e gratidão mútuos.",
+                  image: "/assets/empresa/2024.png"
+                },
+                {
+                  year: "Hoje",
+                  title: "Nova Era e Consolidação",
+                  desc: "Sob a gestão de Fabiano Nardelli e Bruna Mayara, a empresa segue em evolução contínua, atendendo os setores Petroquímico, Mineração, Plástico e muito mais.",
+                  image: "/assets/empresa/hoje.png"
+                }
+              ].map((item, index) => (
+                <div key={index} className={`flex flex-col md:flex-row items-start md:items-center gap-0 ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
+
+                  {/* Bloco de Conteúdo (Texto) */}
+                  <div className={`md:w-1/2 pl-12 md:pl-0 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'}`}>
+                    <h3 className="text-2xl font-bold text-orange-600">{item.year}</h3>
+                    <h4 className="text-lg font-bold text-slate-800 mb-2">{item.title}</h4>
+                    <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+
+                    {/* Imagens Mobile */}
+                    <div className="md:hidden mt-4 flex gap-2 w-full aspect-video">
+                      {item.images ? (
+                        item.images.map((img, i) => (
+                          <div key={i} className="relative w-1/2 h-full rounded-xl overflow-hidden shadow-md">
+                            <Image
+                              src={img}
+                              alt={`${item.title} ${i + 1}`}
+                              fill
+                              className="object-cover"
+                              unoptimized={img.startsWith('http')}
+                            />
+                          </div>
+                        ))
+                      ) : (
+                        item.image && (
+                          <div className="relative w-full h-full rounded-xl overflow-hidden shadow-md">
+                            <Image
+                              src={item.image}
+                              alt={item.title}
+                              fill
+                              className="object-cover"
+                              unoptimized={item.image.startsWith('http')}
+                            />
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Ponto na Linha */}
+                  <div className="absolute left-[14px] md:relative md:left-auto md:mx-auto w-3.5 h-3.5 bg-orange-600 rounded-full ring-4 ring-white shadow-sm z-10 mt-1 md:mt-0 flex-shrink-0"></div>
+
+                  {/* Bloco de Imagem Desktop */}
+                  <div className={`hidden md:block md:w-1/2 ${index % 2 === 0 ? 'md:pl-12' : 'md:pr-12'}`}>
+                    <div className="flex gap-4 w-full aspect-video">
+                      {item.images ? (
+                        item.images.map((img, i) => (
+                          <div key={i} className="relative w-1/2 h-full rounded-2xl overflow-hidden shadow-lg group">
+                            <Image
+                              src={img}
+                              alt={`${item.title} ${i + 1}`}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              unoptimized={img.startsWith('http')}
+                            />
+                          </div>
+                        ))
+                      ) : (
+                        item.image && (
+                          <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg group">
+                            <Image
+                              src={item.image}
+                              alt={item.title}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              unoptimized={item.image.startsWith('http')}
+                            />
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+
                 </div>
-                <div className="w-4 h-4 bg-orange-600 rounded-full border-4 border-white shadow-sm hidden md:block"></div>
-                <div className="md:w-1/2"></div>
-              </div>
-              {/* 2004 */}
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="md:w-1/2 hidden md:block"></div>
-                <div className="w-4 h-4 bg-orange-600 rounded-full border-4 border-white shadow-sm hidden md:block"></div>
-                <div className="md:w-1/2">
-                  <h3 className="text-2xl font-bold text-orange-600">2004</h3>
-                  <h4 className="text-lg font-bold text-slate-800 mb-2">Expansão Tecnológica</h4>
-                  <p className="text-slate-600">Investimento massivo em novas tecnologias e capacitação técnica. Ampliação da estrutura física para atender a demanda crescente.</p>
-                </div>
-              </div>
-              {/* Hoje */}
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="md:w-1/2 md:text-right">
-                  <h3 className="text-2xl font-bold text-orange-600">Hoje</h3>
-                  <h4 className="text-lg font-bold text-slate-800 mb-2">Diversificação</h4>
-                  <p className="text-slate-600">Atuação consolidada nos setores Petroquímico, Mineração, Plástico, Construção Civil, Hídrico e Alimentício, atendendo grandes players nacionais.</p>
-                </div>
-                <div className="w-4 h-4 bg-orange-600 rounded-full border-4 border-white shadow-sm hidden md:block"></div>
-                <div className="md:w-1/2"></div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Missão, Visão e Valores */}
+      {/* Filosofia Corporativa - Missão e Diferenciais */}
       <section className="py-20 bg-slate-50">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-7xl mx-auto mb-16">
+        <div className="container max-w-6xl mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Filosofia Corporativa</h2>
             <p className="text-slate-600 text-lg leading-relaxed">
-              A nossa atuação vai muito além da simples fabricação de peças. Posicionamo-nos como um parceiro estratégico de engenharia, focado em compreender os desafios específicos de cada operação. Entregamos soluções técnicas avançadas que <strong className="text-slate-800">reduzem riscos de paragens inesperadas</strong>, aumentam exponencialmente a vida útil dos componentes e garantem a máxima <strong className="text-slate-800">previsibilidade operacional</strong> para a sua indústria. Trabalhamos para que a sua empresa produza mais, com maior segurança e menor custo de manutenção a longo prazo.
+              Trabalhamos para ser líderes no segmento de usinagem, atendendo ativamente 80% das principais indústrias em Sergipe até 2026.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Missão */}
-            <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all hover:-translate-y-1">
-              <div className="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mb-6 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Missão</h3>
-              <p className="text-slate-600 leading-relaxed">Desenvolver e fornecer soluções industriais voltadas à alta precisão, confiabilidade e desempenho, apoiando empresas que não abrem mão de qualidade, padronização e produtividade em seus processos.</p>
+            <div className="bg-white p-10 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-2 h-full bg-orange-600"></div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">Missão</h3>
+              <p className="text-slate-600 leading-relaxed text-lg">
+                Ajudar as corporações a materializar seus projetos mecânicos de forma ágil e confiável, através de soluções personalizadas em usinagem e metalurgia, gerando valor e realização aos clientes, investidores e sociedade.
+              </p>
             </div>
-            {/* Visão */}
-            <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all hover:-translate-y-1">
-              <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Visão</h3>
-              <p className="text-slate-600 leading-relaxed">Ser uma referência técnica em usinagem e metalmecânica, reconhecida por não competir apenas por preço, mas por contribuir tecnicamente para a eficiência e o resultado final de cada cliente.</p>
-            </div>
-            {/* Valores */}
-            <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all hover:-translate-y-1">
-              <div className="absolute top-0 left-0 w-1 h-full bg-green-600"></div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 mb-6 group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Valores</h3>
-              <ul className="text-slate-600 space-y-2 text-sm">
-                <li className="flex items-center gap-2">✓ Previsibilidade Operacional</li>
-                <li className="flex items-center gap-2">✓ Valorização Humana</li>
-                <li className="flex items-center gap-2">✓ Rigor e Precisão Técnica</li>
-                <li className="flex items-center gap-2">✓ Confiabilidade e Transparência</li>
-                <li className="flex items-center gap-2">✓ Atendimento Criterioso e Personalizado</li>
+
+            {/* Cultura e Diferenciais */}
+            <div className="bg-white p-10 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-2 h-full bg-blue-600"></div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">Nossos Diferenciais</h3>
+              <ul className="text-slate-600 space-y-3 text-lg">
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 font-bold mt-1">✓</span>
+                  Atendimento criterioso, ético e personalizado.
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 font-bold mt-1">✓</span>
+                  Flexibilidade e menor prazo de entrega para reduzir paradas de máquina.
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 font-bold mt-1">✓</span>
+                  Processos de qualidade gerando confiabilidade para o PCM.
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 font-bold mt-1">✓</span>
+                  Somos solucionadores: reduzimos custos e aumentamos a produtividade.
+                </li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Setores de Atuação */}
-      {/* <section className="py-20 bg-slate-900 text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-2xl font-bold mb-12">Setores de Atuação</h2>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-            <span className="px-6 py-3 border border-slate-700 rounded-full hover:bg-orange-600 hover:border-orange-600 transition-all cursor-default">Indústria Têxtil</span>
-            <span className="px-6 py-3 border border-slate-700 rounded-full hover:bg-orange-600 hover:border-orange-600 transition-all cursor-default">Petroquímica</span>
-            <span className="px-6 py-3 border border-slate-700 rounded-full hover:bg-orange-600 hover:border-orange-600 transition-all cursor-default">Mineração</span>
-            <span className="px-6 py-3 border border-slate-700 rounded-full hover:bg-orange-600 hover:border-orange-600 transition-all cursor-default">Construção Civil</span>
-            <span className="px-6 py-3 border border-slate-700 rounded-full hover:bg-orange-600 hover:border-orange-600 transition-all cursor-default">Alimentício</span>
-            <span className="px-6 py-3 border border-slate-700 rounded-full hover:bg-orange-600 hover:border-orange-600 transition-all cursor-default">Máquinas Pesadas</span>
+      {/* Valores Familiares e Humanos */}
+      <section className="py-20 bg-white border-t border-slate-100">
+        <div className="container max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Valores que nos Guiam</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-lg">
+              Nossa base é sólida porque acreditamos no valor do trabalho, na honestidade, na fé e, acima de tudo, na nossa equipe de colaboradores.
+            </p>
           </div>
-        </div>
-      </section> */}
 
-      {/* Footer */}
-      {/* <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-        <div className="container mx-auto px-6 text-center md:text-left">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <h2 className="text-2xl font-bold text-white mb-2">NARDELLI USINAGEM</h2>
-              <p className="text-sm">Produzindo com qualidade e precisão desde 1991.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+            <div>
+              <h4 className="text-xl font-bold text-slate-800 mb-2 border-l-4 border-orange-500 pl-3">Agir com Segurança e Atenção</h4>
+              <p className="text-slate-600">A segurança é praticada até quando ninguém está olhando. Cuidar de nossos colegas é melhorar a qualidade de vida de todos.</p>
             </div>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-white transition-colors">📷</a>
-              <a href="#" className="hover:text-white transition-colors">📘</a>
-              <a href="#" className="hover:text-white transition-colors">📺</a>
+            <div>
+              <h4 className="text-xl font-bold text-slate-800 mb-2 border-l-4 border-orange-500 pl-3">Decisões com Foco no Cliente</h4>
+              <p className="text-slate-600">Entender cada necessidade para tomar decisões éticas e transparentes, garantindo a melhor performance e a satisfação real.</p>
             </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-slate-800 text-sm text-center">
-            <p>&copy; 2024 Nardelli Usinagem. Todos os direitos reservados.</p>
+            <div>
+              <h4 className="text-xl font-bold text-slate-800 mb-2 border-l-4 border-orange-500 pl-3">Fazer a Diferença</h4>
+              <p className="text-slate-600">Buscamos ser os melhores, nos desafiando e inovando continuamente para superar qualquer dificuldade técnica.</p>
+            </div>
+            <div>
+              <h4 className="text-xl font-bold text-slate-800 mb-2 border-l-4 border-orange-500 pl-3">Senso de Dono e Empatia</h4>
+              <p className="text-slate-600">Vestimos a camisa e nos colocamos no lugar do outro. Trabalhamos em equipe com respeito, honestidade e lealdade à instituição.</p>
+            </div>
           </div>
         </div>
-      </footer> */}
+      </section>
+
     </div>
   )
 }
