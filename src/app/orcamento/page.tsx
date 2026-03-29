@@ -12,6 +12,8 @@ interface FormData {
   itemType: string
   observacoes: string
   origem: string
+  enviar_video: string
+  link_do_video: string
   [key: string]: string
 }
 
@@ -158,7 +160,9 @@ export default function Orcamento() {
     telefone: '',
     itemType: '',
     observacoes: '',
-    origem: ''
+    origem: '',
+    enviar_video: '',
+    link_do_video: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<CategoryConfig | null>(null)
@@ -266,7 +270,9 @@ export default function Orcamento() {
           telefone: '',
           itemType: '',
           observacoes: '',
-          origem: ''
+          origem: '',
+          enviar_video: '',
+          link_do_video: ''
         })
         setSelectedCategory(null)
         setSelectedFile(null)
@@ -542,6 +548,57 @@ export default function Orcamento() {
                       </p>
                     </label>
                   </div>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Gostaria de nos enviar um vídeo?</label>
+                  <div className="flex flex-col gap-3">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="enviar_video" 
+                        value="Tem um link do vídeo"
+                        checked={formData.enviar_video === "Tem um link do vídeo"}
+                        onChange={handleInputChange}
+                        onClick={() => {
+                          if (formData.enviar_video === "Tem um link do vídeo") {
+                            setFormData(prev => ({ ...prev, enviar_video: '', link_do_video: '' }))
+                          }
+                        }}
+                        className="w-4 h-4 text-orange-600 focus:ring-orange-500 border-slate-300" 
+                      />
+                      <span className="text-slate-700">Tem um link do vídeo</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="enviar_video" 
+                        value="Nossa equipe entrar em contato para pegar o vídeo"
+                        checked={formData.enviar_video === "Nossa equipe entrar em contato para pegar o vídeo"}
+                        onChange={handleInputChange}
+                        onClick={() => {
+                          if (formData.enviar_video === "Nossa equipe entrar em contato para pegar o vídeo") {
+                            setFormData(prev => ({ ...prev, enviar_video: '', link_do_video: '' }))
+                          }
+                        }}
+                        className="w-4 h-4 text-orange-600 focus:ring-orange-500 border-slate-300" 
+                      />
+                      <span className="text-slate-700">Nossa equipe entrar em contato para pegar o vídeo</span>
+                    </label>
+                  </div>
+                  
+                  {formData.enviar_video === "Tem um link do vídeo" && (
+                     <div className="mt-4 animate-fade-in-up">
+                       <input 
+                         type="url" 
+                         name="link_do_video" 
+                         placeholder="Cole o link do vídeo aqui (YouTube, Google Drive, etc)" 
+                         value={formData.link_do_video}
+                         onChange={handleInputChange}
+                         className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
+                       />
+                     </div>
+                  )}
                 </div>
 
                 <div className="mb-6">
