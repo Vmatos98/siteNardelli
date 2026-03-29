@@ -386,6 +386,55 @@ function SocialBanner() {
   )
 }
 
+function EmpresaSlider() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const imagens = [
+    "/assets/empresa/1991.png",
+    "/assets/empresa/2008.png",
+    "/assets/empresa/2010-1.png",
+    "/assets/empresa/2013.png",
+    "/assets/empresa/2017.png",
+    "/assets/empresa/2024.png",
+    "/assets/empresa/hoje.png"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % imagens.length);
+    }, 4000); // 4 segundos por imagem
+
+    return () => clearInterval(timer);
+  }, [imagens.length]);
+
+  return (
+    <div className="relative w-full h-[400px] rounded-lg shadow-2xl overflow-hidden group z-10">
+      {imagens.map((img, index) => (
+        <Image
+          key={index}
+          src={img}
+          alt={`Estrutura Nardelli ${index + 1}`}
+          fill
+          className={`object-cover transition-opacity duration-1000 ${index === activeIndex ? "opacity-100" : "opacity-0"
+            }`}
+        />
+      ))}
+      {/* Navegação por Pontos */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {imagens.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveIndex(index)}
+            className={`transition-all duration-300 rounded-full h-2 shadow-sm ${index === activeIndex ? "bg-orange-600 w-8" : "bg-white/80 w-2 hover:bg-white"
+              }`}
+            aria-label={`Ir para a imagem ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className="bg-slate-50 text-slate-800">
@@ -425,14 +474,8 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="lg:w-1/2 relative">
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-orange-100 rounded-tl-3xl -z-10"></div>
-              <Image
-                src="https://nardelliusinagem.com/web/wp-content/uploads/2015/02/elem02-02.png"
-                alt="Oficina de Usinagem"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-2xl w-full object-cover h-[400px]"
-              />
-              <div className="absolute -bottom-6 -right-6 bg-orange-600 text-white p-6 rounded-lg shadow-lg hidden md:block">
+              <EmpresaSlider />
+              <div className="absolute -bottom-6 -right-6 bg-orange-600 text-white p-6 rounded-lg shadow-lg hidden md:block z-30">
                 <p className="text-3xl font-bold">30+</p>
                 <p className="text-sm uppercase tracking-wide">Anos de Experiência</p>
               </div>
