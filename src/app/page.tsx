@@ -70,39 +70,61 @@ function ServiceCard({ title, description, image, badge, tags, delay = 0 }: Serv
 function ClientesSection() {
   const [categoriaAtiva, setCategoriaAtiva] = useState('petroleo_gas')
 
+  // 1. DADOS ATUALIZADOS: Agora cada cliente é um objeto com nome e logo
   const clientesPorSetor = {
     petroleo_gas: {
       nome: 'Petróleo, Gás & Energia',
-      clientes: ['Petrobras', 'Carmo Energy', 'Energen Energias Renovaveis S/a']
+      clientes: [
+        { nome: 'Petrobras', logo: '/assets/clientes/petrobras.svg' },
+        { nome: 'Carmo Energy', logo: '/assets/clientes/carmo-energy.png' },
+        { nome: 'Energen Energias Renovaveis S/a', logo: '/assets/clientes/energen.png' }
+      ]
     },
     textil: {
       nome: 'Indústria Têxtil',
-      clientes: ['Sergitex Indústria Têxtil', 'Peixoto Gonçalves', 'Grupo Constâncio Vieira', 'Esencial Indústria Têxtil', 'Altenburg']
+      clientes: [
+        { nome: 'Sergitex Indústria Têxtil', logo: '/assets/clientes/sergitex.png' },
+        { nome: 'Peixoto Gonçalves', logo: '/assets/clientes/peixoto.png' },
+        { nome: 'Grupo Constâncio Vieira', logo: '/assets/clientes/constancio.png' },
+        { nome: 'Esencial Indústria Têxtil', logo: '/assets/clientes/esencial.png' },
+        { nome: 'Altenburg', logo: '/assets/clientes/altenburg.svg' }
+      ]
     },
     alimenticia: {
       nome: 'Alimentícia',
-      clientes: ['Grupo Maratá', 'Natulact', 'Duas Rodas', 'Ambev']
+      clientes: [
+        { nome: 'Grupo Maratá', logo: '/assets/clientes/marata.png' },
+        { nome: 'Natulact', logo: '/assets/clientes/natulact.png' },
+        { nome: 'Duas Rodas', logo: '/assets/clientes/duas-rodas.png' },
+        { nome: 'Ambev', logo: '/assets/clientes/ambev.png' }
+      ]
     },
     mineracao: {
       nome: 'Mineração',
-      clientes: ['Mosaic Fertilizantes', 'Votorantim Cimentos']
+      clientes: [
+        { nome: 'Mosaic Fertilizantes', logo: '/assets/clientes/mosaic.png' },
+        { nome: 'Votorantim Cimentos', logo: '/assets/clientes/votorantim.png' }
+      ]
     },
     construcao: {
       nome: 'Outros Setores',
-      clientes: ['VLI TMIB Terminal Marítimo Inácio Barbosa', 'Indústria Vidreira Do Nordeste LTDA', 'Crown Holdings Inc.']
+      clientes: [
+        { nome: 'VLI TMIB', logo: '/assets/clientes/vli.png' },
+        { nome: 'Indústria Vidreira Do Nordeste LTDA', logo: '/assets/clientes/ivn.png' },
+        { nome: 'Crown Holdings Inc.', logo: '/assets/clientes/crown.png' }
+      ]
     }
   }
 
   const categorias = Object.keys(clientesPorSetor)
   const categoriaData = clientesPorSetor[categoriaAtiva as keyof typeof clientesPorSetor]
 
-  // Auto-rotação de categorias a cada 45 segundos
   React.useEffect(() => {
     const timer = setInterval(() => {
       const currentIndex = categorias.indexOf(categoriaAtiva)
       const nextIndex = (currentIndex + 1) % categorias.length
       setCategoriaAtiva(categorias[nextIndex])
-    }, 45000) // 45 segundos
+    }, 45000)
 
     return () => clearInterval(timer)
   }, [categoriaAtiva, categorias])
@@ -111,7 +133,6 @@ function ClientesSection() {
     setCategoriaAtiva(categoria)
   }
 
-  // Mostra até 6 clientes (2 linhas x 3 colunas)
   const clientesVisiveis = categoriaData.clientes.slice(0, 6)
 
   return (
@@ -126,7 +147,6 @@ function ClientesSection() {
           </p>
         </div>
 
-        {/* Categorias */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {Object.entries(clientesPorSetor).map(([key, setor]) => (
             <button
@@ -143,18 +163,32 @@ function ClientesSection() {
           ))}
         </div>
 
-        {/* Grid de Clientes - 2 linhas x 3 colunas */}
+        {/* 2. RENDERIZAÇÃO ATUALIZADA */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {clientesVisiveis.map((cliente, index) => (
             <div
               key={`${categoriaAtiva}-${index}`}
-              className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-center border-2 border-transparent hover:border-[#1D293D] animate-fade-in"
+              className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center border-2 border-transparent hover:border-[#1D293D] animate-fade-in min-h-[220px]"
             >
-              <div className="text-center">
-                <div className="text-2xl font-bold mb-2" style={{ color: '#1D293D' }}>
-                  {cliente}
+              {/* Contêiner da Logo com tamanho fixo */}
+              <div className="h-16 w-full relative flex items-center justify-center mb-6 mt-2">
+                {cliente.logo && (
+                  <img
+                    src={cliente.logo}
+                    alt={`Logo ${cliente.nome}`}
+                    className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                  />
+                )}
+              </div>
+
+              {/* Informações de Texto Abaixo da Logo */}
+              <div className="text-center mt-auto w-full">
+                <div className="text-xl font-bold mb-2 text-[#1D293D]">
+                  {cliente.nome}
                 </div>
-                <div className="text-xs text-slate-500 uppercase tracking-wider">{categoriaData.nome}</div>
+                <div className="text-xs text-slate-500 uppercase tracking-wider font-medium">
+                  {categoriaData.nome}
+                </div>
               </div>
             </div>
           ))}
