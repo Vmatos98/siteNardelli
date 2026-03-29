@@ -70,39 +70,61 @@ function ServiceCard({ title, description, image, badge, tags, delay = 0 }: Serv
 function ClientesSection() {
   const [categoriaAtiva, setCategoriaAtiva] = useState('petroleo_gas')
 
+  // 1. DADOS ATUALIZADOS: Agora cada cliente é um objeto com nome e logo
   const clientesPorSetor = {
     petroleo_gas: {
       nome: 'Petróleo, Gás & Energia',
-      clientes: ['Petrobras', 'Carmo Energy', 'Energen Energias Renovaveis S/a']
+      clientes: [
+        { nome: 'Petrobras', logo: '/assets/clientes/petrobras.svg' },
+        { nome: 'Carmo Energy', logo: '/assets/clientes/carmo-energy.png' },
+        { nome: 'Energen Energias Renovaveis S/a', logo: '/assets/clientes/energen.png' }
+      ]
     },
     textil: {
       nome: 'Indústria Têxtil',
-      clientes: ['Sergitex Indústria Têxtil', 'Peixoto Gonçalves', 'Grupo Constâncio Vieira', 'Esencial Indústria Têxtil', 'Altenburg']
+      clientes: [
+        { nome: 'Sergitex Indústria Têxtil', logo: '/assets/clientes/sergitex.png' },
+        { nome: 'Peixoto Gonçalves', logo: '/assets/clientes/peixoto.png' },
+        { nome: 'Grupo Constâncio Vieira', logo: '/assets/clientes/constancio.png' },
+        { nome: 'Esencial Indústria Têxtil', logo: '/assets/clientes/esencial.png' },
+        { nome: 'Altenburg', logo: '/assets/clientes/altenburg.svg' }
+      ]
     },
     alimenticia: {
       nome: 'Alimentícia',
-      clientes: ['Grupo Maratá', 'Natulact', 'Duas Rodas', 'Ambev']
+      clientes: [
+        { nome: 'Grupo Maratá', logo: '/assets/clientes/marata.png' },
+        { nome: 'Natulact', logo: '/assets/clientes/natulact.png' },
+        { nome: 'Duas Rodas', logo: '/assets/clientes/duas-rodas.png' },
+        { nome: 'Ambev', logo: '/assets/clientes/ambev.png' }
+      ]
     },
     mineracao: {
       nome: 'Mineração',
-      clientes: ['Mosaic Fertilizantes', 'Votorantim Cimentos']
+      clientes: [
+        { nome: 'Mosaic Fertilizantes', logo: '/assets/clientes/mosaic.png' },
+        { nome: 'Votorantim Cimentos', logo: '/assets/clientes/votorantim.png' }
+      ]
     },
     construcao: {
       nome: 'Outros Setores',
-      clientes: ['VLI TMIB Terminal Marítimo Inácio Barbosa', 'Indústria Vidreira Do Nordeste LTDA', 'Crown Holdings Inc.']
+      clientes: [
+        { nome: 'VLI TMIB', logo: '/assets/clientes/vli.png' },
+        { nome: 'Indústria Vidreira Do Nordeste LTDA', logo: '/assets/clientes/ivn.png' },
+        { nome: 'Crown Holdings Inc.', logo: '/assets/clientes/crown.png' }
+      ]
     }
   }
 
   const categorias = Object.keys(clientesPorSetor)
   const categoriaData = clientesPorSetor[categoriaAtiva as keyof typeof clientesPorSetor]
 
-  // Auto-rotação de categorias a cada 45 segundos
   React.useEffect(() => {
     const timer = setInterval(() => {
       const currentIndex = categorias.indexOf(categoriaAtiva)
       const nextIndex = (currentIndex + 1) % categorias.length
       setCategoriaAtiva(categorias[nextIndex])
-    }, 45000) // 45 segundos
+    }, 45000)
 
     return () => clearInterval(timer)
   }, [categoriaAtiva, categorias])
@@ -111,7 +133,6 @@ function ClientesSection() {
     setCategoriaAtiva(categoria)
   }
 
-  // Mostra até 6 clientes (2 linhas x 3 colunas)
   const clientesVisiveis = categoriaData.clientes.slice(0, 6)
 
   return (
@@ -126,7 +147,6 @@ function ClientesSection() {
           </p>
         </div>
 
-        {/* Categorias */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {Object.entries(clientesPorSetor).map(([key, setor]) => (
             <button
@@ -143,18 +163,32 @@ function ClientesSection() {
           ))}
         </div>
 
-        {/* Grid de Clientes - 2 linhas x 3 colunas */}
+        {/* 2. RENDERIZAÇÃO ATUALIZADA */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {clientesVisiveis.map((cliente, index) => (
             <div
               key={`${categoriaAtiva}-${index}`}
-              className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-center border-2 border-transparent hover:border-[#1D293D] animate-fade-in"
+              className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center border-2 border-transparent hover:border-[#1D293D] animate-fade-in min-h-[220px]"
             >
-              <div className="text-center">
-                <div className="text-2xl font-bold mb-2" style={{ color: '#1D293D' }}>
-                  {cliente}
+              {/* Contêiner da Logo com tamanho fixo */}
+              <div className="h-16 w-full relative flex items-center justify-center mb-6 mt-2">
+                {cliente.logo && (
+                  <img
+                    src={cliente.logo}
+                    alt={`Logo ${cliente.nome}`}
+                    className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                  />
+                )}
+              </div>
+
+              {/* Informações de Texto Abaixo da Logo */}
+              <div className="text-center mt-auto w-full">
+                <div className="text-xl font-bold mb-2 text-[#1D293D]">
+                  {cliente.nome}
                 </div>
-                <div className="text-xs text-slate-500 uppercase tracking-wider">{categoriaData.nome}</div>
+                <div className="text-xs text-slate-500 uppercase tracking-wider font-medium">
+                  {categoriaData.nome}
+                </div>
               </div>
             </div>
           ))}
@@ -352,6 +386,55 @@ function SocialBanner() {
   )
 }
 
+function EmpresaSlider() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const imagens = [
+    "/assets/empresa/1991.png",
+    "/assets/empresa/2008.png",
+    "/assets/empresa/2010-1.png",
+    "/assets/empresa/2013.png",
+    "/assets/empresa/2017.png",
+    "/assets/empresa/2024.png",
+    "/assets/empresa/hoje.png"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % imagens.length);
+    }, 4000); // 4 segundos por imagem
+
+    return () => clearInterval(timer);
+  }, [imagens.length]);
+
+  return (
+    <div className="relative w-full h-[400px] rounded-lg shadow-2xl overflow-hidden group z-10">
+      {imagens.map((img, index) => (
+        <Image
+          key={index}
+          src={img}
+          alt={`Estrutura Nardelli ${index + 1}`}
+          fill
+          className={`object-cover transition-opacity duration-1000 ${index === activeIndex ? "opacity-100" : "opacity-0"
+            }`}
+        />
+      ))}
+      {/* Navegação por Pontos */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {imagens.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveIndex(index)}
+            className={`transition-all duration-300 rounded-full h-2 shadow-sm ${index === activeIndex ? "bg-orange-600 w-8" : "bg-white/80 w-2 hover:bg-white"
+              }`}
+            aria-label={`Ir para a imagem ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className="bg-slate-50 text-slate-800">
@@ -391,14 +474,8 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="lg:w-1/2 relative">
               <div className="absolute -top-4 -left-4 w-24 h-24 bg-orange-100 rounded-tl-3xl -z-10"></div>
-              <Image
-                src="https://nardelliusinagem.com/web/wp-content/uploads/2015/02/elem02-02.png"
-                alt="Oficina de Usinagem"
-                width={600}
-                height={400}
-                className="rounded-lg shadow-2xl w-full object-cover h-[400px]"
-              />
-              <div className="absolute -bottom-6 -right-6 bg-orange-600 text-white p-6 rounded-lg shadow-lg hidden md:block">
+              <EmpresaSlider />
+              <div className="absolute -bottom-6 -right-6 bg-orange-600 text-white p-6 rounded-lg shadow-lg hidden md:block z-30">
                 <p className="text-3xl font-bold">30+</p>
                 <p className="text-sm uppercase tracking-wide">Anos de Experiência</p>
               </div>

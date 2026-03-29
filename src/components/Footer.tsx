@@ -30,10 +30,14 @@ export function Footer() {
                 </div>
                 <div className="mt-12 pt-8 border-t border-slate-800 text-sm text-center">
                     <p>&copy; {new Date().getFullYear()} Nardelli Usinagem. Todos os direitos reservados.</p>
-                    <div className="mt-4">
+                    <div className="mt-4 flex flex-col md:flex-row items-center justify-center gap-4">
                         <Link href="/politica-de-privacidade" className="text-slate-500 hover:text-white transition-colors">
                             Política de Privacidade
                         </Link>
+                        <span className="hidden md:inline text-slate-700">|</span>
+                        <a href="https://automatas.tech" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
+                            Desenvolvido por Automatas Tech
+                        </a>
                     </div>
                 </div>
             </div>
