@@ -93,12 +93,14 @@ export async function POST(request: NextRequest) {
     const email = formData.get('email') as string;
     const telefone = formData.get('telefone') as string;
     const itemType = formData.get('itemType') as string;
+    const quantidade = formData.get('quantidade') as string || '';
+    const prazo = formData.get('prazo') as string || '';
     const observacoes = formData.get('observacoes') as string || '';
     const origem = formData.get('origem') as string || '';
     const arquivo = formData.get('arquivo') as File | null;
 
     // Campos Dinâmicos
-    const camposIgnorar = ['nome', 'empresa', 'email', 'telefone', 'itemType', 'observacoes', 'origem', 'arquivo'];
+    const camposIgnorar = ['nome', 'empresa', 'email', 'telefone', 'itemType', 'observacoes', 'origem', 'arquivo', 'quantidade', 'prazo'];
     const dynamicFields: { [key: string]: string } = {};
 
     for (const [key, value] of formData.entries()) {
@@ -153,11 +155,13 @@ export async function POST(request: NextRequest) {
 SOLICITAÇÃO DE ORÇAMENTO
 Data: ${timestamp}
 ===================================
-Nome:     ${nome}
-Empresa:  ${empresa}
-Email:    ${email}
-Telefone: ${telefone}
-Origem:   ${origem || 'Não informado'}
+Nome:       ${nome}
+Empresa:    ${empresa}
+Email:      ${email}
+Telefone:   ${telefone}
+Origem:     ${origem || 'Não informado'}
+Quantidade: ${quantidade || 'Não informado'}
+Prazo:      ${prazo || 'Não informado'}
 
 ESPECIFICAÇÕES (${itemType.toUpperCase()})
 -----------------------

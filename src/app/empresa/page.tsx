@@ -150,14 +150,8 @@ export default function Empresa() {
                 {
                   year: "2024",
                   title: "Terceira Mudança e Novos Caminhos",
-                  desc: "Pela terceira vez, a empresa expande seu espaço físico, deixando o local anterior para se instalar em um parque fabril novo e ainda maior. No mesmo ano, o sócio Júlio se despede amigavelmente para abraçar uma oportunidade em outro estado, com respeito e gratidão mútuos.",
+                  desc: "Pela terceira vez, a empresa expande seu espaço físico, deixando o local anterior para se instalar em um parque fabril novo e ainda maior. Hoje a empresa segue em evolução contínua, atendendo os setores Petroquímico, Mineração, Plástico e muito mais.",
                   image: "/assets/empresa/2024.png"
-                },
-                {
-                  year: "Hoje",
-                  title: "Nova Era e Consolidação",
-                  desc: "Sob a gestão de Fabiano Nardelli e Bruna Mayara, a empresa segue em evolução contínua, atendendo os setores Petroquímico, Mineração, Plástico e muito mais.",
-                  image: "/assets/empresa/hoje.png"
                 }
               ].map((item, index) => (
                 <div key={index} className={`flex flex-col md:flex-row items-start md:items-center gap-0 ${index % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
