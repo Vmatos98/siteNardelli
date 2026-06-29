@@ -1,8 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { StructureSection } from '@/components/StructureSection'
 import { PhysicalStructureSection } from '@/components/PhysicalStructureSection'
-import { getAllOneDrivePhotos } from './actions'
+import { OneDrivePhotosLoader } from '@/components/OneDrivePhotosLoader'
 
 // DADOS DA ESTRUTURA FÍSICA
 const estruturaFisicaData = {
@@ -253,30 +252,7 @@ const sections = [
   }
 ]
 
-export default async function Estrutura() {
-
-  // 1. Busca todas as fotos do OneDrive no lado do servidor
-  const allPhotos = await getAllOneDrivePhotos()
-
-  // 2. Cria um mapa rápido das fotos (ex: { "e011": "https://onedrive...", "e012": "..." })
-  const photoMap = allPhotos.reduce((acc, photo) => {
-    acc[photo.nameWithoutExt] = photo.src
-    return acc
-  }, {} as Record<string, string>)
-
-  // 3. Substitui dinamicamente as imagens locais pelas URLs do OneDrive se existirem
-  const dynamicSections = sections.map(section => ({
-    ...section,
-    items: section.items.map(item => {
-      const imageName = item.image.split('/').pop()?.split('.')[0]?.toLowerCase()
-
-      return {
-        ...item,
-        // Se a imagem bater com o nome da planilha, usa a URL do OneDrive, senão mantém original
-        image: (imageName && photoMap[imageName]) ? photoMap[imageName] : item.image
-      }
-    })
-  }))
+export default function Estrutura() {
 
   return (
     <div className="bg-slate-50 text-slate-800">
@@ -356,15 +332,9 @@ export default async function Estrutura() {
           <p className="text-slate-600 max-w-2xl mx-auto">Conheça os equipamentos que compõem nosso setor produtivo, divididos por categoria de operação.</p>
         </div>
 
-        {/* Renderiza as Máquinas e Categorias passando o array dinâmico */}
+        {/* Renderiza as Máquinas e Categorias via OneDrivePhotosLoader */}
         <div className="space-y-24">
-          {dynamicSections.map((section, index) => (
-            <StructureSection
-              key={section.id}
-              {...section}
-              reversed={index % 2 !== 0}
-            />
-          ))}
+          <OneDrivePhotosLoader sections={sections} />
         </div>
 
       </div>

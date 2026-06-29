@@ -10,6 +10,8 @@ interface FormData {
   email: string
   telefone: string
   itemType: string
+  quantidade: string
+  prazo: string
   observacoes: string
   origem: string
   enviar_video: string
@@ -159,6 +161,8 @@ export default function Orcamento() {
     email: '',
     telefone: '',
     itemType: '',
+    quantidade: '',
+    prazo: '',
     observacoes: '',
     origem: '',
     enviar_video: '',
@@ -269,6 +273,8 @@ export default function Orcamento() {
           email: '',
           telefone: '',
           itemType: '',
+          quantidade: '',
+          prazo: '',
           observacoes: '',
           origem: '',
           enviar_video: '',
@@ -515,6 +521,37 @@ export default function Orcamento() {
                 {selectedCategory && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-slate-50 rounded-xl border border-slate-200">
                     {renderDynamicFields()}
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Quantidade *
+                      </label>
+                      <input
+                        type="number"
+                        name="quantidade"
+                        required
+                        min="1"
+                        value={formData.quantidade}
+                        onChange={handleInputChange}
+                        placeholder="Ex: 5"
+                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Prazo Desejado *
+                      </label>
+                      <input
+                        type="text"
+                        name="prazo"
+                        required
+                        value={formData.prazo}
+                        onChange={handleInputChange}
+                        placeholder="Ex: 15 dias, urgente, etc."
+                        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all bg-white"
+                      />
+                    </div>
                   </div>
                 )}
               </div>

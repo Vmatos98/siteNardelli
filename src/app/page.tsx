@@ -77,7 +77,7 @@ function ClientesSection() {
       clientes: [
         { nome: 'Petrobras', logo: '/assets/clientes/petrobras.svg' },
         { nome: 'Carmo Energy', logo: '/assets/clientes/carmo-energy.png' },
-        { nome: 'Energen Energias Renovaveis S/a', logo: '/assets/clientes/energen.png' }
+        { nome: 'Energen Energias Renovaveis S/a', logo: '/assets/clientes/energen.jpeg' }
       ]
     },
     textil: {
@@ -395,8 +395,7 @@ function EmpresaSlider() {
     "/assets/empresa/2010-1.png",
     "/assets/empresa/2013.png",
     "/assets/empresa/2017.png",
-    "/assets/empresa/2024.png",
-    "/assets/empresa/hoje.png"
+    "/assets/empresa/2024.png"
   ];
 
   useEffect(() => {

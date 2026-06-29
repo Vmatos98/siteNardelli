@@ -19,9 +19,25 @@ interface StructureSectionProps {
     subtitle: string
     items: Item[]
     reversed?: boolean
+    photoMap?: Record<string, string>
+    photosLoading?: boolean
 }
 
-export function StructureSection({ id, title, subtitle, items, reversed = false }: StructureSectionProps) {
+export function resolveImageSrc(
+    originalSrc: string,
+    photoMap: Record<string, string>,
+    photosLoading: boolean
+): { src: string | null; showSkeleton: boolean } {
+    const isLocalAsset = originalSrc.startsWith('/assets/')
+    if (photosLoading && isLocalAsset) {
+        return { src: null, showSkeleton: true }
+    }
+    const nameWithoutExt = originalSrc.split('/').pop()?.split('.')[0]?.toLowerCase()
+    const oneDriveSrc = nameWithoutExt ? photoMap[nameWithoutExt] : undefined
+    return { src: oneDriveSrc ?? originalSrc, showSkeleton: false }
+}
+
+export function StructureSection({ id, title, subtitle, items, reversed = false, photoMap, photosLoading }: StructureSectionProps) {
     const [activeIndex, setActiveIndex] = useState(0)
 
     return (
@@ -88,6 +104,52 @@ export function StructureSection({ id, title, subtitle, items, reversed = false 
                                                     </div>
                                                 )}
                                             </div>
+
+                                            {/* Foto inline — apenas mobile */}
+                                            <div className="mt-4 block lg:hidden">
+                                                <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden">
+                                                    <AnimatePresence mode="wait">
+                                                        {(() => {
+                                                            const { src, showSkeleton } = resolveImageSrc(
+                                                                item.image,
+                                                                photoMap ?? {},
+                                                                photosLoading ?? false
+                                                            )
+                                                            if (showSkeleton) {
+                                                                return (
+                                                                    <motion.div
+                                                                        key="skeleton"
+                                                                        initial={{ opacity: 0 }}
+                                                                        animate={{ opacity: 1 }}
+                                                                        exit={{ opacity: 0 }}
+                                                                        className="absolute inset-0 animate-pulse bg-slate-200"
+                                                                    />
+                                                                )
+                                                            }
+                                                            return (
+                                                                <motion.div
+                                                                    key={src ?? 'local'}
+                                                                    initial={{ opacity: 0, scale: 1.02 }}
+                                                                    animate={{ opacity: 1, scale: 1 }}
+                                                                    exit={{ opacity: 0 }}
+                                                                    transition={{ duration: 0.3 }}
+                                                                    className="absolute inset-0"
+                                                                >
+                                                                    {src && (
+                                                                        <Image
+                                                                            src={src}
+                                                                            alt={item.title}
+                                                                            fill
+                                                                            className="object-cover"
+                                                                            unoptimized={src.startsWith('http')}
+                                                                        />
+                                                                    )}
+                                                                </motion.div>
+                                                            )
+                                                        })()}
+                                                    </AnimatePresence>
+                                                </div>
+                                            </div>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -97,32 +159,46 @@ export function StructureSection({ id, title, subtitle, items, reversed = false 
                 </div>
 
                 {/* Image Side */}
-                <div className="lg:w-1/2 w-full">
+                <div className="lg:w-1/2 w-full hidden lg:block">
                     <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl bg-slate-100">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={activeIndex}
-                                initial={{ opacity: 0, scale: 1.05 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.4 }}
-                                className="absolute inset-0"
-                            >
-                                <Image
-                                    src={items[activeIndex].image}
-                                    alt={items[activeIndex].title}
-                                    fill
-                                    className="object-cover"
-                                    priority
-                                    unoptimized={items[activeIndex].image.startsWith('http')}
-                                />
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
-                                    <p className="text-white font-medium text-lg border-l-4 border-orange-500 pl-3">
-                                        {items[activeIndex].title}
-                                    </p>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
+                        {(() => {
+                            const { src, showSkeleton } = resolveImageSrc(
+                                items[activeIndex].image,
+                                photoMap ?? {},
+                                photosLoading ?? false
+                            )
+                            if (showSkeleton) {
+                                return <div className="absolute inset-0 animate-pulse bg-slate-200 rounded-2xl" />
+                            }
+                            return (
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={activeIndex}
+                                        initial={{ opacity: 0, scale: 1.05 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.4 }}
+                                        className="absolute inset-0"
+                                    >
+                                        {src && (
+                                            <Image
+                                                src={src}
+                                                alt={items[activeIndex].title}
+                                                fill
+                                                className="object-cover transition-opacity duration-300"
+                                                priority
+                                                unoptimized={src.startsWith('http')}
+                                            />
+                                        )}
+                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 pt-12">
+                                            <p className="text-white font-medium text-lg border-l-4 border-orange-500 pl-3">
+                                                {items[activeIndex].title}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
+                            )
+                        })()}
 
                         {/* Indicators */}
                         <div className="absolute bottom-4 right-4 flex gap-2 z-10">
