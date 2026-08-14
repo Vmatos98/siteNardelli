@@ -44,13 +44,41 @@ async function getVagasFolderId(drive: any, parentFolderId: string): Promise<str
   }
 }
 
+export interface DadosCandidatoNotificacao {
+  vaga: string;
+  nome: string;
+  email: string;
+  telefone: string;
+  endereco: string;
+  cidadeEstado: string;
+  dataNascimento: string;
+  sexo: string;
+  habilitacao: string;
+  escolaridade: string;
+  formacaoSuperior: string;
+  formacaoTecnica: string;
+  resumoCursos: string;
+  experienciaNaVaga: string;
+  resumoExperiencia: string;
+  pretensaoSalarial: string;
+  timestamp: string;
+}
+
+export interface AnexoCurriculo {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+}
+
 // Envio de email de confirmação para o candidato
-async function enviarConfirmacaoCandidato(dados: { nome: string; email: string; vaga: string }) {
+export async function enviarConfirmacaoCandidato(dados: { nome: string; email: string; vaga: string }) {
   try {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.warn('⚠️ Credenciais de e-mail não configuradas. Pulando envio de confirmação.');
       return;
     }
+
+    const emailEmpresa = process.env.EMAIL_NOTIFICACAO_VAGAS || process.env.EMAIL_USER;
 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.hostinger.com',
@@ -66,6 +94,7 @@ async function enviarConfirmacaoCandidato(dados: { nome: string; email: string; 
     const mailOptions = {
       from: `"Nardelli Usinagem" <${process.env.EMAIL_ALIAS || process.env.EMAIL_USER}>`,
       to: dados.email,
+      replyTo: emailEmpresa,
       subject: `Inscrição Recebida - Vaga: ${dados.vaga}`,
       text: `Olá ${dados.nome},\n\nRecebemos sua inscrição para a vaga de ${dados.vaga}.\nSeu currículo e informações foram cadastrados com sucesso em nosso banco de talentos.\n\nAtenciosamente,\nEquipe Nardelli Usinagem`,
       html: `
@@ -98,6 +127,164 @@ async function enviarConfirmacaoCandidato(dados: { nome: string; email: string; 
     console.log(`📧 E-mail de confirmação enviado para o candidato: ${dados.email}`);
   } catch (error) {
     console.error('❌ Erro ao enviar e-mail para o candidato:', error);
+  }
+}
+
+// Envio de email de notificação com informações do candidato para a empresa
+export async function enviarNotificacaoEmpresa(
+  dados: DadosCandidatoNotificacao,
+  anexo?: AnexoCurriculo
+) {
+  try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn('⚠️ Credenciais de e-mail não configuradas. Pulando envio de notificação para a empresa.');
+      return;
+    }
+
+    const emailEmpresa = process.env.EMAIL_NOTIFICACAO_VAGAS || process.env.EMAIL_USER;
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST || 'smtp.hostinger.com',
+      port: Number(process.env.EMAIL_PORT) || 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: { rejectUnauthorized: false }
+    });
+
+    const attachments: any[] = [
+      {
+        filename: 'logo v1.png',
+        path: path.join(process.cwd(), 'public', 'assets', 'logo v1.png'),
+        cid: 'logonardelli'
+      }
+    ];
+
+    if (anexo) {
+      attachments.push({
+        filename: anexo.filename,
+        content: anexo.content,
+        contentType: anexo.contentType
+      });
+    }
+
+    const mailOptions = {
+      from: `"Nardelli Usinagem - Vagas" <${process.env.EMAIL_ALIAS || process.env.EMAIL_USER}>`,
+      to: emailEmpresa,
+      replyTo: dados.email,
+      subject: `[Nova Candidatura] ${dados.vaga} - ${dados.nome}`,
+      text: `NOVA CANDIDATURA RECEBIDA!\n\nVaga: ${dados.vaga}\nNome: ${dados.nome}\nE-mail: ${dados.email}\nTelefone: ${dados.telefone}\nCidade/Estado: ${dados.cidadeEstado}\nEscolaridade: ${dados.escolaridade}\nExperiência: ${dados.experienciaNaVaga}\nPretensão Salarial: ${dados.pretensaoSalarial}\nData/Hora: ${dados.timestamp}\n\nConfira todos os detalhes no HTML do e-mail e no currículo anexado.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #1e293b; max-width: 650px; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="cid:logonardelli" alt="Nardelli Usinagem" style="max-width: 180px; height: auto;" />
+          </div>
+          
+          <div style="background-color: #ffffff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+            <div style="background-color: #ea580c; color: #ffffff; text-align: center; padding: 8px 12px; font-weight: bold; border-radius: 4px; margin-bottom: 16px; font-size: 14px;">
+              🚨 NOVA CANDIDATURA RECEBIDA
+            </div>
+
+            <h2 style="color: #0f172a; margin-top: 0; font-size: 18px;">Vaga Pretendida: <span style="color: #ea580c;">${dados.vaga}</span></h2>
+            <p style="color: #64748b; font-size: 13px; margin-top: -10px; margin-bottom: 20px;">Data/Hora da inscrição: ${dados.timestamp}</p>
+
+            <h3 style="background-color: #0f172a; color: #ffffff; padding: 6px 12px; font-size: 13px; border-radius: 4px; margin-top: 20px;">1. Dados Pessoais e de Contato</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 16px;">
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold; width: 30%;">Nome Completo</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;"><strong>${dados.nome}</strong></td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">E-mail</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;"><a href="mailto:${dados.email}" style="color: #ea580c; text-decoration: none;">${dados.email}</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Telefone / WhatsApp</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;"><a href="https://wa.me/${dados.telefone.replace(/\D/g, '')}" target="_blank" style="color: #16a34a; font-weight: bold; text-decoration: none;">${dados.telefone} 💬</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Endereço Residencial</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.endereco || 'Não informado'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Cidade / Estado</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.cidadeEstado || 'Não informado'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Data de Nascimento</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.dataNascimento || 'Não informada'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Sexo</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.sexo || 'Não informado'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Possui Habilitação (CNH)</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.habilitacao || 'Não possui'}</td>
+              </tr>
+            </table>
+
+            <h3 style="background-color: #0f172a; color: #ffffff; padding: 6px 12px; font-size: 13px; border-radius: 4px; margin-top: 20px;">2. Formação Acadêmica e Qualificações</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 16px;">
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold; width: 30%;">Escolaridade</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;"><strong>${dados.escolaridade}</strong></td>
+              </tr>
+              ${dados.formacaoTecnica ? `
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Ensino Técnico</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.formacaoTecnica}</td>
+              </tr>` : ''}
+              ${dados.formacaoSuperior ? `
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Ensino Superior / Pós</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.formacaoSuperior}</td>
+              </tr>` : ''}
+            </table>
+
+            ${dados.resumoCursos ? `
+            <p style="font-weight: bold; margin-bottom: 4px; font-size: 13px;">Resumo de Cursos Extracurriculares:</p>
+            <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; margin-bottom: 16px; font-size: 13px; white-space: pre-wrap;">${dados.resumoCursos}</div>
+            ` : ''}
+
+            <h3 style="background-color: #0f172a; color: #ffffff; padding: 6px 12px; font-size: 13px; border-radius: 4px; margin-top: 20px;">3. Experiência Profissional e Pretensão</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 16px;">
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold; width: 30%;">Experiência na Vaga</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;">${dados.experienciaNaVaga || 'Não informado'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; background-color: #f1f5f9; font-weight: bold;">Pretensão Salarial</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1;"><strong>${dados.pretensaoSalarial || 'Não informada'}</strong></td>
+              </tr>
+            </table>
+
+            ${dados.resumoExperiencia ? `
+            <p style="font-weight: bold; margin-bottom: 4px; font-size: 13px;">Resumo das Experiências Profissionais:</p>
+            <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; margin-bottom: 16px; font-size: 13px; white-space: pre-wrap;">${dados.resumoExperiencia}</div>
+            ` : ''}
+
+            ${anexo ? `
+            <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px; border-radius: 4px; font-size: 13px; margin-top: 16px;">
+              📎 <strong>Currículo Anexado:</strong> O arquivo enviado pelo candidato (<code>${anexo.filename}</code>) está em anexo nesta mensagem.
+            </div>
+            ` : `
+            <div style="background-color: #fff7ed; border: 1px solid #ffedd5; color: #c2410c; padding: 10px; border-radius: 4px; font-size: 13px; margin-top: 16px;">
+              ⚠️ O candidato não anexou um arquivo de currículo.
+            </div>
+            `}
+          </div>
+        </div>
+      `,
+      attachments
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`📧 E-mail de notificação enviado para a empresa (${emailEmpresa}) referente ao candidato ${dados.nome}`);
+  } catch (error) {
+    console.error('❌ Erro ao enviar e-mail de notificação para a empresa:', error);
   }
 }
 
@@ -286,6 +473,8 @@ export async function POST(request: NextRequest) {
     });
 
     // Anexar arquivo de Currículo se for enviado
+    let anexoCurriculo: AnexoCurriculo | undefined = undefined;
+
     if (arquivo && arquivo.size > 0) {
       const arrayBuffer = await arquivo.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -293,6 +482,12 @@ export async function POST(request: NextRequest) {
 
       const fileExt = path.extname(arquivo.name) || '.pdf';
       const fileName = `CURRICULO_${sanitizeName(nome).replace(/\s+/g, '_')}${fileExt}`;
+
+      anexoCurriculo = {
+        filename: fileName,
+        content: buffer,
+        contentType: arquivo.type || 'application/pdf'
+      };
 
       await drive.files.create({
         requestBody: {
@@ -310,6 +505,27 @@ export async function POST(request: NextRequest) {
     if (email) {
       await enviarConfirmacaoCandidato({ nome, email, vaga });
     }
+
+    // Enviar email de notificação com todas as informações para a empresa
+    await enviarNotificacaoEmpresa({
+      vaga,
+      nome,
+      email,
+      telefone,
+      endereco,
+      cidadeEstado,
+      dataNascimento,
+      sexo,
+      habilitacao,
+      escolaridade,
+      formacaoSuperior,
+      formacaoTecnica,
+      resumoCursos,
+      experienciaNaVaga,
+      resumoExperiencia,
+      pretensaoSalarial,
+      timestamp
+    }, anexoCurriculo);
 
     return NextResponse.json({
       success: true,
