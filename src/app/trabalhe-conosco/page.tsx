@@ -13,7 +13,9 @@ import {
     Ruler,
     HardHat,
     DraftingCompass,
-    Laptop
+    Laptop,
+    GraduationCap,
+    Briefcase
 } from 'lucide-react';
 
 export const metadata = {
@@ -177,6 +179,20 @@ export default function TrabalheConosco() {
                             </div>
                             <h3 className="font-bold text-slate-800">Administrativo</h3>
                             <p className="text-xs text-slate-500">Gestão e Financeiro</p>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200 text-center hover:border-orange-400 transition-colors group">
+                            <div className="flex justify-center mb-2 text-orange-600 group-hover:scale-110 transition-transform">
+                                <GraduationCap className="w-8 h-8" />
+                            </div>
+                            <h3 className="font-bold text-slate-800">Estagiário</h3>
+                            <p className="text-xs text-slate-500">Técnico e Superior</p>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200 text-center hover:border-orange-400 transition-colors group">
+                            <div className="flex justify-center mb-2 text-orange-600 group-hover:scale-110 transition-transform">
+                                <Briefcase className="w-8 h-8" />
+                            </div>
+                            <h3 className="font-bold text-slate-800">Outros</h3>
+                            <p className="text-xs text-slate-500">Banco de Talentos</p>
                         </div>
                     </div>
                 </div>

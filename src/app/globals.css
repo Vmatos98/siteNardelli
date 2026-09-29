@@ -20,7 +20,7 @@ body {
 }
 
 .hero-bg {
-  background-image: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+  background-image: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.88)), url('/assets/hero-cnc.webp');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -65,4 +65,13 @@ body {
   border-left-color: #EA580C;
   transform: translateX(5px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Utilitário para ocultar barra de rolagem mantendo funcionamento do scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

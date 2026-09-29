@@ -20,6 +20,8 @@ describe('Vagas Form Configuration', () => {
     expect(VAGAS_OPCOES).toContain("Gerente Comercial");
     expect(VAGAS_OPCOES).toContain("Fresador máquinas convencionais");
     expect(VAGAS_OPCOES).toContain("Serviços Gerais");
+    expect(VAGAS_OPCOES).toContain("Estagiário");
+    expect(VAGAS_OPCOES).toContain("Outros");
     expect(VAGAS_OPCOES.length).toBeGreaterThanOrEqual(13);
   });
 });
@@ -31,7 +33,7 @@ describe('Notificações de Email de Vagas', () => {
     vi.clearAllMocks();
     process.env.EMAIL_USER = 'compras@nardelliusinagem.com';
     process.env.EMAIL_PASS = 'secret_pass';
-    process.env.EMAIL_NOTIFICACAO_VAGAS = 'antoniovitomatos@gmail.com';
+    process.env.EMAIL_NOTIFICACAO_VAGAS = 'rh@nardelliusinagem.com';
 
     (nodemailer.createTransport as any).mockReturnValue({
       sendMail: mockSendMail,

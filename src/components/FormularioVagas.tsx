@@ -17,7 +17,8 @@ export const VAGAS_OPCOES = [
   "Gerente Comercial",
   "Fresador máquinas convencionais",
   "Serviços Gerais",
-  "Outra vaga / Banco de Talentos"
+  "Estagiário",
+  "Outros"
 ];
 
 export function FormularioVagas() {
