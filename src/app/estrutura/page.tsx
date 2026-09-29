@@ -191,14 +191,6 @@ const sections = [
         capacidade: "1200ºC Ø400 x 500mm",
         fabricante: "JB",
         observacoes: "Máxima 1200°C 100kg"
-      },
-      {
-        title: "Tanque de resfriamento com agitação",
-        description: "Para resfriamento de peças através de Óleo ou salmoura com agitação.",
-        image: "https://images.unsplash.com/photo-1565439398533-3158dc060c4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
-        capacidade: "Ø500 x 900mm",
-        fabricante: "Nardelli",
-        observacoes: "Máxima 100kg"
       }
     ]
   },

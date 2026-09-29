@@ -39,10 +39,172 @@ export function resolveImageSrc(
 
 export function StructureSection({ id, title, subtitle, items, reversed = false, photoMap, photosLoading }: StructureSectionProps) {
     const [activeIndex, setActiveIndex] = useState(0)
+    const activeItem = items[activeIndex] ?? items[0]
 
     return (
         <section id={id} className="scroll-mt-32 category-group py-12 border-b border-slate-100 last:border-0">
-            <div className={`flex flex-col ${reversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-12`}>
+            {/* ======================================================== */}
+            {/* VERSÃO MOBILE (< lg): Foto no topo, Abas abaixo, Textos  */}
+            {/* ======================================================== */}
+            <div className="block lg:hidden space-y-4">
+                {/* Cabeçalho da Categoria */}
+                <div>
+                    <div className="flex items-center mb-2">
+                        <div className="w-1.5 h-6 bg-orange-600 rounded-full mr-3 shrink-0"></div>
+                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h2>
+                    </div>
+                    <p className="text-slate-600 text-sm leading-relaxed mb-4">
+                        {subtitle}
+                    </p>
+                </div>
+
+                {/* 1. Foto da Máquina Selecionada (Acima) */}
+                <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden shadow-md bg-slate-900">
+                    <AnimatePresence mode="wait">
+                        {(() => {
+                            const { src, showSkeleton } = resolveImageSrc(
+                                activeItem.image,
+                                photoMap ?? {},
+                                photosLoading ?? false
+                            )
+                            if (showSkeleton) {
+                                return (
+                                    <motion.div
+                                        key="skeleton-mobile"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="absolute inset-0 animate-pulse bg-slate-200"
+                                    />
+                                )
+                            }
+                            return (
+                                <motion.div
+                                    key={src ?? activeIndex}
+                                    initial={{ opacity: 0, scale: 1.02 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="absolute inset-0"
+                                >
+                                    {src && (
+                                        <Image
+                                            src={src}
+                                            alt={activeItem.title}
+                                            fill
+                                            className="object-cover"
+                                            priority
+                                            unoptimized={src.startsWith('http')}
+                                        />
+                                    )}
+                                    {/* Overlay sutil na base da foto */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent flex flex-col justify-end p-4">
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-white font-semibold text-base line-clamp-1 border-l-2 border-orange-500 pl-2 drop-shadow-sm">
+                                                {activeItem.title}
+                                            </p>
+                                            <span className="text-[11px] font-medium bg-black/50 backdrop-blur-sm text-orange-300 px-2 py-0.5 rounded-full shrink-0 ml-2 border border-white/10">
+                                                {activeIndex + 1}/{items.length}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )
+                        })()}
+                    </AnimatePresence>
+                </div>
+
+                {/* 2. Pequenas Abas para cada máquina da categoria (Abaixo da imagem) */}
+                <div className="py-1">
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar scroll-smooth -mx-1 px-1">
+                        {items.map((item, index) => {
+                            const isSelected = activeIndex === index
+                            return (
+                                <button
+                                    key={index}
+                                    type="button"
+                                    onClick={() => setActiveIndex(index)}
+                                    className={`px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap transition-all duration-200 border shrink-0 flex items-center gap-1.5 ${
+                                        isSelected
+                                            ? 'bg-orange-600 text-white border-orange-600 shadow-sm shadow-orange-600/30'
+                                            : 'bg-white text-slate-700 hover:text-orange-600 hover:bg-slate-50 border-slate-200'
+                                    }`}
+                                    aria-selected={isSelected}
+                                >
+                                    <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-orange-500'}`} />
+                                    <span>{item.title}</span>
+                                </button>
+                            )
+                        })}
+                    </div>
+                </div>
+
+                {/* 3. Textos e Detalhes da máquina selecionada (Abaixo das abas) */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeIndex}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.2 }}
+                        className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm space-y-4"
+                    >
+                        <div>
+                            <div className="flex items-center justify-between gap-2 mb-2">
+                                <h3 className="font-bold text-lg text-slate-900 leading-snug">
+                                    {activeItem.title}
+                                </h3>
+                                <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-200/60 shrink-0">
+                                    Selecionada
+                                </span>
+                            </div>
+                            <p className="text-sm text-slate-600 leading-relaxed">
+                                {activeItem.description}
+                            </p>
+                        </div>
+
+                        {(activeItem.capacidade || activeItem.fabricante || activeItem.observacoes) && (
+                            <div className="grid gap-2.5 pt-3 border-t border-slate-100">
+                                {activeItem.capacidade && (
+                                    <div className="bg-slate-50/90 rounded-lg p-3 border border-slate-100">
+                                        <span className="text-[10px] font-bold text-orange-800/70 uppercase tracking-widest block mb-0.5">
+                                            Capacidade Técnica
+                                        </span>
+                                        <span className="text-sm text-slate-700 font-medium">
+                                            {activeItem.capacidade}
+                                        </span>
+                                    </div>
+                                )}
+                                {activeItem.fabricante && (
+                                    <div className="bg-slate-50/90 rounded-lg p-3 border border-slate-100">
+                                        <span className="text-[10px] font-bold text-orange-800/70 uppercase tracking-widest block mb-0.5">
+                                            Fabricante / Modelo
+                                        </span>
+                                        <span className="text-sm text-slate-700 font-medium">
+                                            {activeItem.fabricante}
+                                        </span>
+                                    </div>
+                                )}
+                                {activeItem.observacoes && (
+                                    <div className="bg-slate-50/90 rounded-lg p-3 border border-slate-100">
+                                        <span className="text-[10px] font-bold text-orange-800/70 uppercase tracking-widest block mb-0.5">
+                                            Observações
+                                        </span>
+                                        <span className="text-sm text-slate-700 font-medium">
+                                            {activeItem.observacoes}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            {/* ======================================================== */}
+            {/* VERSÃO DESKTOP (lg+): Duas colunas lado a lado           */}
+            {/* ======================================================== */}
+            <div className={`hidden lg:flex ${reversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-12`}>
                 {/* Content Side */}
                 <div className="lg:w-1/2 flex flex-col justify-center">
                     <div className="flex items-center mb-6">
@@ -75,7 +237,7 @@ export function StructureSection({ id, title, subtitle, items, reversed = false,
                                     {item.description}
                                 </p>
 
-                                {/* Área expansível para detalhes extras da máquina */}
+                                {/* Área expansível para detalhes extras da máquina no desktop */}
                                 <AnimatePresence>
                                     {activeIndex === index && (item.capacidade || item.fabricante || item.observacoes) && (
                                         <motion.div
@@ -103,52 +265,6 @@ export function StructureSection({ id, title, subtitle, items, reversed = false,
                                                         <span className="text-sm text-slate-700">{item.observacoes}</span>
                                                     </div>
                                                 )}
-                                            </div>
-
-                                            {/* Foto inline — apenas mobile */}
-                                            <div className="mt-4 block lg:hidden">
-                                                <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden">
-                                                    <AnimatePresence mode="wait">
-                                                        {(() => {
-                                                            const { src, showSkeleton } = resolveImageSrc(
-                                                                item.image,
-                                                                photoMap ?? {},
-                                                                photosLoading ?? false
-                                                            )
-                                                            if (showSkeleton) {
-                                                                return (
-                                                                    <motion.div
-                                                                        key="skeleton"
-                                                                        initial={{ opacity: 0 }}
-                                                                        animate={{ opacity: 1 }}
-                                                                        exit={{ opacity: 0 }}
-                                                                        className="absolute inset-0 animate-pulse bg-slate-200"
-                                                                    />
-                                                                )
-                                                            }
-                                                            return (
-                                                                <motion.div
-                                                                    key={src ?? 'local'}
-                                                                    initial={{ opacity: 0, scale: 1.02 }}
-                                                                    animate={{ opacity: 1, scale: 1 }}
-                                                                    exit={{ opacity: 0 }}
-                                                                    transition={{ duration: 0.3 }}
-                                                                    className="absolute inset-0"
-                                                                >
-                                                                    {src && (
-                                                                        <Image
-                                                                            src={src}
-                                                                            alt={item.title}
-                                                                            fill
-                                                                            className="object-cover"
-                                                                            unoptimized={src.startsWith('http')}
-                                                                        />
-                                                                    )}
-                                                                </motion.div>
-                                                            )
-                                                        })()}
-                                                    </AnimatePresence>
-                                                </div>
                                             </div>
                                         </motion.div>
                                     )}

@@ -66,3 +66,12 @@ body {
   transform: translateX(5px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
+
+/* Utilitário para ocultar barra de rolagem mantendo funcionamento do scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

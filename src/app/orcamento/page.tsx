@@ -56,14 +56,19 @@ const formConfig = {
       "Recuperação por Embuchamento",
       "Retífica",
       "Usinagem (Furo/Rasgo/Chaveta)",
+      "Tratamento Térmico",
       "Apenas Cotação"
     ],
     tratamentos: [
       "Nenhum",
       "Têmpera",
       "Cementação",
+      "Revenimento",
+      "Normalização",
+      "Alívio de Tensões",
       "Nitretação",
-      "Têmpera por Indução"
+      "Têmpera por Indução",
+      "Não sei / A definir"
     ]
   },
   categorias: [
@@ -86,6 +91,7 @@ const formConfig = {
         { key: "passo", label: "Passo ou Módulo", type: "text", placeholder: "Ex: Módulo 2 ou Asa 40", required: false },
         { key: "dimensao", label: "Diâmetro Externo", type: "text", unit: "mm", required: true },
         { key: "material", label: "Material", type: "select", source: "materiais", required: true },
+        { key: "tratamento", label: "Tratamento Térmico", type: "select", source: "tratamentos", required: false },
         { key: "servico", label: "Serviço", type: "select", source: "servicos", required: true }
       ]
     },
@@ -140,6 +146,18 @@ const formConfig = {
         { key: "dimensoes", label: "Dimensões (Ø x Comp.)", type: "text", unit: "mm", required: true },
         { key: "revestimento", label: "Possui Revestimento?", type: "select", options: ["Não (Aço puro)", "Borracha", "Cromo Duro", "Cerâmica"], required: false },
         { key: "servico", label: "Serviço", type: "select", source: "servicos", required: true }
+      ]
+    },
+    {
+      id: "tratamento_termico",
+      label: "Tratamento Térmico",
+      campos: [
+        { key: "processo", label: "Processo Desejado", type: "select", options: ["Têmpera", "Cementação", "Revenimento", "Normalização", "Alívio de Tensões", "Nitretação", "Outro / A definir"], required: true },
+        { key: "tipo_peca", label: "Descrição da Peça", type: "text", placeholder: "Ex: Eixo, matriz, lâmina, engrenagem", required: true },
+        { key: "material", label: "Material da Peça", type: "select", source: "materiais", required: true },
+        { key: "dimensoes", label: "Dimensões Aproximadas", type: "text", placeholder: "Ex: Ø120 x 500 mm ou 300x200x50 mm", required: true },
+        { key: "peso_aproximado", label: "Peso Estimado por Peça", type: "text", placeholder: "Ex: 15 kg", required: false },
+        { key: "dureza_desejada", label: "Dureza Desejada", type: "text", placeholder: "Ex: 55-60 HRC", required: false }
       ]
     },
     {
@@ -503,14 +521,14 @@ export default function Orcamento() {
                 </h3>
 
                 <div className="mb-8">
-                  <label className="block text-sm font-bold text-slate-800 mb-3">O que você precisa usinar?</label>
+                  <label className="block text-sm font-bold text-slate-800 mb-3">O que você precisa?</label>
                   <select
                     required
                     value={formData.itemType}
                     onChange={handleCategoryChange}
                     className="w-full px-4 py-4 text-lg rounded-lg border-2 border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 outline-none transition-all bg-white cursor-pointer"
                   >
-                    <option value="" disabled>Selecione o tipo de peça...</option>
+                    <option value="" disabled>Selecione o tipo de peça ou serviço...</option>
                     {formConfig.categorias.map(cat => (
                       <option key={cat.id} value={cat.id}>{cat.label}</option>
                     ))}

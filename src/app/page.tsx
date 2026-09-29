@@ -450,7 +450,7 @@ export default function Home() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-400">Qualidade, Precisão e Confiabilidade</span>
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-            Soluções completas em usinagem de precisão, torno CNC e manutenção industrial para grandes empresas.
+            Somos a solução em usinagem de precisão, torno CNC e manutenção industrial para grandes empresas.
           </p>
 
           <div className="flex flex-col md:flex-row gap-4 justify-center mb-32">
@@ -560,59 +560,204 @@ export default function Home() {
             />
           </div>
 
-          {/* Seção Inferior: Materiais e Setores */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-slate-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 divider-x-0 md:divide-x divide-slate-100">
-
-              {/* Materiais Trabalhados */}
-              <div className="md:pr-12">
-                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-2">
-                  Materiais Trabalhados
-                </h4>
-                <ul className="grid grid-cols-2 gap-y-3 gap-x-4">
-                  {[
-                    "Aço Inox (304, 316)", "Aço Carbono",
-                    "Alumínio Aeronáutico", "Latão e Bronze",
-                    "Polímeros (Nylon, UHMW)", "Ligas Especiais"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-2 text-slate-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Principais Setores */}
-              <div className="md:pl-12">
-                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-2">
-                  Principais Setores
-                </h4>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    { icon: "🚜", label: "Agrícola" },
-                    { icon: "🏭", label: "Mineração" },
-                    { icon: "⚡", label: "Energia" },
-                    { icon: "🧴", label: "Embalagens" },
-                    { icon: "🚗", label: "Automotivo" },
-                  ].map((setor, i) => (
-                    <span key={i} className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-700 rounded-lg border border-slate-200 font-medium hover:bg-slate-100 transition-colors text-sm">
-                      <span>{setor.icon}</span>
-                      {setor.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
+          {/* Seção de Infraestrutura, Capacidade e Materiais */}
+          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-slate-100">
+            {/* Cabeçalho da Seção */}
+            <div className="max-w-3xl mb-12">
+              <span className="text-orange-600 font-bold tracking-widest uppercase text-xs md:text-sm mb-2 block">
+                Infraestrutura & Capacidade Técnica
+              </span>
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+                Estrutura Robusta para Projetos de Qualquer Escala
+              </h3>
+              <p className="text-slate-600 text-base md:text-lg leading-relaxed">
+                Combinamos maquinário pesado, tecnologia CNC de alta fidelidade e versatilidade em matérias-primas para atender desde peças unitárias sob medida até linhas seriadas e paradas industriais críticas.
+              </p>
             </div>
 
-            <div className="text-center mt-12 pt-8 border-t border-slate-100">
-              <Link href="/estrutura" className="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-orange-500/20 transform hover:-translate-y-0.5">
-                Conheça Nossa Estrutura em Detalhes
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
+            {/* Grid de Métricas da Estrutura */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-orange-200 hover:shadow-md transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <div className="text-3xl font-extrabold text-slate-900 mb-1">2.300 m²</div>
+                <div className="text-sm font-bold text-orange-600 uppercase tracking-wider mb-2">Área Fabril Total</div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  1.200 m² construídos e 1.100 m² de pátio livre para manobra e movimentação ágil de cargas.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-orange-200 hover:shadow-md transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                  </svg>
+                </div>
+                <div className="text-3xl font-extrabold text-slate-900 mb-1">Até 3.000 kg</div>
+                <div className="text-sm font-bold text-orange-600 uppercase tracking-wider mb-2">Capacidade por Peça</div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Tornos e mandrilhadora polonesa com admissão para componentes e blocos pesados.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-orange-200 hover:shadow-md transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                  </svg>
+                </div>
+                <div className="text-3xl font-extrabold text-slate-900 mb-1">4m & Ø1.000mm</div>
+                <div className="text-sm font-bold text-orange-600 uppercase tracking-wider mb-2">Grandes Dimensões</div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Barramento para eixos de até 4 metros e usinagem de flanges com diâmetro até 1.000 mm.
+                </p>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-orange-200 hover:shadow-md transition-all group">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                  </svg>
+                </div>
+                <div className="text-3xl font-extrabold text-slate-900 mb-1">Até 1.200 °C</div>
+                <div className="text-sm font-bold text-orange-600 uppercase tracking-wider mb-2">Tratamento Térmico</div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Fornos mufla próprios para têmpera, revenimento, alívio de tensões e cementação controlada.
+                </p>
+              </div>
+            </div>
+
+            {/* Materiais Trabalhados - Padrão de Cards Alinhado com o Site */}
+            <div className="mb-12">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-slate-100 gap-2">
+                <div>
+                  <h4 className="text-lg md:text-xl font-bold text-slate-900">
+                    Materiais & Matérias-Primas Trabalhadas
+                  </h4>
+                  <p className="text-sm text-slate-500">
+                    Processamento com ferramental adequado, velocidade de corte calibrada e fluido de refrigeração ideal.
+                  </p>
+                </div>
+                <span className="text-xs font-semibold px-3 py-1 bg-orange-50 text-orange-600 rounded-full border border-orange-200 self-start sm:self-auto">
+                  Ampla Versatilidade Técnica
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Aços Carbono e Ferramenta */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-sm mb-4">
+                      Fe
+                    </div>
+                    <h5 className="font-bold text-slate-900 text-base mb-1">Aços Carbono e Ligas</h5>
+                    <p className="text-xs text-slate-500 mb-4">
+                      Alta resistência mecânica, usinabilidade e temperabilidade sob medida.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-slate-100">
+                    {["SAE 1020 / 1045", "Aço Ferramenta VND / D2", "Aço Liga 4140 / 4340", "Aço 8620"].map((mat, i) => (
+                      <span key={i} className="px-2.5 py-1 bg-slate-50 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                        {mat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Aços Inoxidáveis */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm mb-4">
+                      SS
+                    </div>
+                    <h5 className="font-bold text-slate-900 text-base mb-1">Aços Inoxidáveis</h5>
+                    <p className="text-xs text-slate-500 mb-4">
+                      Proteção anticorrosiva para indústrias alimentícia, química e offshore.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-slate-100">
+                    {["Inox 304 / 304L", "Inox 316 / 316L", "Inox Martensítico 410 / 420"].map((mat, i) => (
+                      <span key={i} className="px-2.5 py-1 bg-slate-50 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                        {mat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Metais Não-Ferrosos */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-sm mb-4">
+                      Al/Cu
+                    </div>
+                    <h5 className="font-bold text-slate-900 text-base mb-1">Não-Ferrosos & Ligas</h5>
+                    <p className="text-xs text-slate-500 mb-4">
+                      Excelente condutibilidade, redução de peso e resistência ao atrito.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-slate-100">
+                    {["Alumínio 6061 / 7075", "Bronze TM-23 / Fosforoso", "Latão", "Cobre Eletrolítico"].map((mat, i) => (
+                      <span key={i} className="px-2.5 py-1 bg-slate-50 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                        {mat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Polímeros Industriais */}
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm mb-4">
+                      Poly
+                    </div>
+                    <h5 className="font-bold text-slate-900 text-base mb-1">Polímeros Técnicos</h5>
+                    <p className="text-xs text-slate-500 mb-4">
+                      Termoplásticos de alto rendimento para desgaste, impacto e isolamento.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-slate-100">
+                    {["Nylon 6.0 / Technyl", "UHMW 1900", "Teflon (PTFE)", "Poliuretano / Celeron"].map((mat, i) => (
+                      <span key={i} className="px-2.5 py-1 bg-slate-50 text-slate-700 text-xs font-medium rounded-md border border-slate-200">
+                        {mat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Banner de Chamada para a Página Estrutura */}
+            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden border border-slate-700/60">
+              <div className="relative z-10 text-center md:text-left max-w-xl">
+                <span className="text-orange-400 font-bold uppercase tracking-wider text-xs block mb-1">
+                  Parque Fabril em Detalhes
+                </span>
+                <h4 className="text-xl md:text-2xl font-bold mb-2 text-white">
+                  Deseja ver todas as máquinas, cursos de eixos e fotos da nossa fábrica?
+                </h4>
+                <p className="text-sm text-slate-300">
+                  Acesse nossa página completa com galeria fotográfica, marcas dos equipamentos e tabela com todas as capacidades dimensionais.
+                </p>
+              </div>
+
+              <div className="relative z-10 flex-shrink-0">
+                <Link
+                  href="/estrutura"
+                  className="inline-flex items-center gap-3 px-7 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-orange-500/25 transform hover:-translate-y-0.5 group"
+                >
+                  Conheça Nossa Estrutura em Detalhes
+                  <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Elementos decorativos de fundo */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-orange-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20"></div>
             </div>
           </div>
         </div>
