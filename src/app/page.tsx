@@ -394,8 +394,7 @@ function EmpresaSlider() {
     "/assets/empresa/2008.png",
     "/assets/empresa/2010-1.png",
     "/assets/empresa/2013.png",
-    "/assets/empresa/2017.png",
-    "/assets/empresa/2024.png"
+    "/assets/empresa/2017.png"
   ];
 
   useEffect(() => {
@@ -479,14 +478,24 @@ export default function Home() {
                 <p className="text-sm uppercase tracking-wide">Anos de Experiência</p>
               </div>
             </div>
+
             <div className="lg:w-1/2">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-slate-900 section-title">Sobre a Nardelli</h2>
-              <p className="text-slate-600 leading-relaxed mb-6 text-lg">
-                A Nardelli Usinagem conta com uma vasta gama de serviços oferecidos graças ao constante investimento em equipamentos de alta tecnologia. Nosso objetivo é proporcionar sempre um produto de alta qualidade e confiabilidade.
+              <span className="text-orange-600 font-bold tracking-widest uppercase text-xs md:text-sm mb-2 block">
+                Tradição & Confiabilidade Industrial
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-slate-900 section-title inline-block">
+                Sobre a Nardelli
+              </h2>
+              <p className="text-slate-600 leading-relaxed mb-4 text-base md:text-lg">
+                Fundada em 1991, a <strong className="text-slate-800">Nardelli Usinagem</strong> consolidou mais de três décadas de história desenvolvendo e fornecendo soluções industriais voltadas à alta precisão, confiabilidade e desempenho, apoiando parceiros que priorizam qualidade, padronização e pontualidade.
               </p>
-              <p className="text-slate-600 leading-relaxed mb-8">
-                Não é à toa que grandes empresas firmaram parceria sólida conosco. Unimos tradição, processos de produção seguros e preços competitivos para atender as demandas mais exigentes do mercado sergipano e nacional.
+              <p className="text-slate-600 leading-relaxed mb-4 text-sm md:text-base">
+                Nosso compromisso é entregar soluções técnicas que reduzem riscos operacionais, evitam paradas não planejadas e aumentam a vida útil dos componentes mecânicos, garantindo previsibilidade e alto rendimento.
               </p>
+              <p className="text-slate-600 leading-relaxed mb-6 text-sm md:text-base">
+                Cada demanda é tratada de forma <strong className="text-slate-800">criteriosa e personalizada</strong>, respeitando normas técnicas, tolerâncias centesimais e matérias-primas específicas para a aplicação de cada cliente.
+              </p>
+
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <li className="flex items-center gap-3 text-slate-700 font-medium">
                   ✅ Preços Competitivos
@@ -501,8 +510,9 @@ export default function Home() {
                   ✅ Equipe Especializada
                 </li>
               </ul>
-              <Link href="/empresa" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-md">
-                Conheça Mais
+
+              <Link href="/empresa" className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-md hover:shadow-orange-500/20 transform hover:-translate-y-0.5">
+                Conheça Nossa História Completa
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
