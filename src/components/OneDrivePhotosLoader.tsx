@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { getAllOneDrivePhotos } from '@/app/estrutura/actions'
+import { useEstruturaCache } from '@/lib/estruturaCache'
 import { StructureSection } from '@/components/StructureSection'
 
 interface Item {
@@ -25,21 +24,10 @@ interface OneDrivePhotosLoaderProps {
 }
 
 export function OneDrivePhotosLoader({ sections }: OneDrivePhotosLoaderProps) {
-  const [photoMap, setPhotoMap] = useState<Record<string, string>>({})
-  const [photosLoading, setPhotosLoading] = useState(true)
+  const { photoMap, isLoading } = useEstruturaCache()
 
-  useEffect(() => {
-    getAllOneDrivePhotos()
-      .then(photos => {
-        const map = photos.reduce<Record<string, string>>(
-          (acc, p) => ({ ...acc, [p.nameWithoutExt]: p.src }),
-          {}
-        )
-        setPhotoMap(map)
-      })
-      .catch(() => { /* silencioso — mantém fallback */ })
-      .finally(() => setPhotosLoading(false))
-  }, [])
+  const safePhotoMap = photoMap ?? {}
+  const photosLoading = isLoading
 
   return (
     <>
@@ -48,10 +36,11 @@ export function OneDrivePhotosLoader({ sections }: OneDrivePhotosLoaderProps) {
           key={section.id}
           {...section}
           reversed={index % 2 !== 0}
-          photoMap={photoMap}
+          photoMap={safePhotoMap}
           photosLoading={photosLoading}
         />
       ))}
     </>
   )
 }
+
