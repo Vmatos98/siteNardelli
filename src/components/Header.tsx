@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { preloadEstruturaPhotos } from '@/lib/estruturaCache'
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -44,6 +45,13 @@ export function Header() {
               <Link
                 key={link.name}
                 href={link.path}
+                prefetch={true}
+                onMouseEnter={() => {
+                  if (link.path === '/estrutura') preloadEstruturaPhotos()
+                }}
+                onTouchStart={() => {
+                  if (link.path === '/estrutura') preloadEstruturaPhotos()
+                }}
                 className={`transition-colors relative group py-1 whitespace-nowrap ${isActive(link.path) && link.path !== '/#contato'
                   ? 'text-orange-600 font-bold'
                   : 'hover:text-orange-600'
@@ -100,6 +108,13 @@ export function Header() {
             <Link
               key={link.name}
               href={link.path}
+              prefetch={true}
+              onMouseEnter={() => {
+                if (link.path === '/estrutura') preloadEstruturaPhotos()
+              }}
+              onTouchStart={() => {
+                if (link.path === '/estrutura') preloadEstruturaPhotos()
+              }}
               className={`block px-6 py-2.5 hover:bg-orange-50 hover:text-orange-600 transition-colors ${isActive(link.path) && link.path !== '/#contato' ? 'text-orange-600 font-bold bg-orange-50/80' : 'text-slate-700'
                 }`}
               onClick={() => setIsMobileMenuOpen(false)}

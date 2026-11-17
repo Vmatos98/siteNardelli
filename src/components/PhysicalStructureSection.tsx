@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { getEstruturaPhotos } from '@/app/estrutura/actions'
+import { useEstruturaCache } from '@/lib/estruturaCache'
 
 interface PhysicalStructureProps {
     title: string
@@ -18,26 +18,12 @@ export type StructuralGalleryItem = {
 }
 
 export function PhysicalStructureSection({ title, subtitle }: PhysicalStructureProps) {
-    const [photos, setPhotos] = useState<StructuralGalleryItem[]>([])
-    const [loading, setLoading] = useState(true)
+    const { estruturaPhotos, isLoading } = useEstruturaCache()
+    const photos = (estruturaPhotos ?? []) as StructuralGalleryItem[]
+    const loading = isLoading
+
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
-
     const [activeSlideIndex, setActiveSlideIndex] = useState(0)
-
-    useEffect(() => {
-        async function fetchPhotos() {
-            setLoading(true)
-            try {
-                const fetchedPhotos = await getEstruturaPhotos()
-                setPhotos(fetchedPhotos)
-            } catch (error) {
-                console.error("Erro ao carregar fotos da estrutura:", error)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchPhotos()
-    }, [])
 
     const handleNextImage = useCallback((e?: React.MouseEvent) => {
         e?.stopPropagation()
@@ -115,9 +101,22 @@ export function PhysicalStructureSection({ title, subtitle }: PhysicalStructureP
 
                 {/* Galeria em formato Slideshow */}
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-                        <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mb-4"></div>
-                        <p className="text-slate-500 font-medium">Carregando galeria da estrutura...</p>
+                    <div className="w-full max-w-6xl mx-auto animate-fade-in">
+                        {/* Imagem Principal Skeleton com Loading */}
+                        <div className="relative w-full aspect-video md:aspect-[21/9] bg-slate-800/80 rounded-2xl overflow-hidden shadow-2xl mb-6 border border-slate-700/50 flex flex-col items-center justify-center gap-3">
+                            <div className="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
+                            <p className="text-slate-300 font-medium text-sm animate-pulse">Carregando fotos da estrutura...</p>
+                        </div>
+
+                        {/* Miniaturas Skeleton */}
+                        <div className="flex gap-3 overflow-hidden pb-4">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg bg-slate-800/60 animate-pulse border border-slate-700/40"
+                                />
+                            ))}
+                        </div>
                     </div>
                 ) : photos.length > 0 ? (
                     <div className="animate-fade-in w-full max-w-6xl mx-auto">

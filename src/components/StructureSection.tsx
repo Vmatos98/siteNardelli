@@ -74,8 +74,11 @@ export function StructureSection({ id, title, subtitle, items, reversed = false,
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="absolute inset-0 animate-pulse bg-slate-200"
-                                    />
+                                        className="absolute inset-0 bg-slate-800 flex flex-col items-center justify-center gap-2"
+                                    >
+                                        <div className="w-8 h-8 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin" />
+                                        <span className="text-xs font-medium text-slate-400 animate-pulse">Carregando imagem...</span>
+                                    </motion.div>
                                 )
                             }
                             return (
@@ -284,7 +287,12 @@ export function StructureSection({ id, title, subtitle, items, reversed = false,
                                 photosLoading ?? false
                             )
                             if (showSkeleton) {
-                                return <div className="absolute inset-0 animate-pulse bg-slate-200 rounded-2xl" />
+                                return (
+                                    <div className="absolute inset-0 bg-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2 border border-slate-700/50">
+                                        <div className="w-10 h-10 border-3 border-orange-500/20 border-t-orange-500 rounded-full animate-spin" />
+                                        <span className="text-xs font-medium text-slate-300 animate-pulse">Carregando imagem...</span>
+                                    </div>
+                                )
                             }
                             return (
                                 <AnimatePresence mode="wait">

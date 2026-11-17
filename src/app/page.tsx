@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
+import { preloadEstruturaPhotos } from '@/lib/estruturaCache'
 
 // Componente de Card de Serviço
 interface ServiceCardProps {
@@ -307,7 +308,13 @@ function DiferenciaisSlider() {
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <Link href="/estrutura" className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded font-semibold transition-all backdrop-blur-sm">
+                <Link
+                  href="/estrutura"
+                  prefetch={true}
+                  onMouseEnter={() => preloadEstruturaPhotos()}
+                  onTouchStart={() => preloadEstruturaPhotos()}
+                  className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded font-semibold transition-all backdrop-blur-sm"
+                >
                   Ver Detalhes
                 </Link>
               </div>
@@ -756,6 +763,9 @@ export default function Home() {
               <div className="relative z-10 flex-shrink-0">
                 <Link
                   href="/estrutura"
+                  prefetch={true}
+                  onMouseEnter={() => preloadEstruturaPhotos()}
+                  onTouchStart={() => preloadEstruturaPhotos()}
                   className="inline-flex items-center gap-3 px-7 py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-orange-500/25 transform hover:-translate-y-0.5 group"
                 >
                   Conheça Nossa Estrutura em Detalhes

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import WhatsAppChat from "@/components/WhatsAppChat";
+import { EstruturaPreloader } from "@/components/EstruturaPreloader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} font-sans antialiased`}>
+        <EstruturaPreloader />
         <Header />
         {children}
         <Footer />
